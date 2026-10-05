@@ -95,20 +95,20 @@ Legende: `[x]` fertig · `[ ]` offen
 ## Phase 9 – Watch & Kino (cytu.be-Stil + HQTube-Integration)
 HQTube (`hqtube`, bisher Node/React/SQLite) wird nach Rust portiert und hier aufgenommen –
 ein Paket, ein Binary, eine Datenbank.
-- [ ] Räume mit Inhaber + Moderatoren, Sichtbarkeit, Playlist-Regeln (offen / Mitglieder / nur Mods)
-- [ ] Raumverzeichnis mit „Live"- und „Nächste Vorstellung"-Anzeige
-- [ ] Quellen: YouTube, direkte Video-URLs, Dateien aus der Filebase, eigene Mediathek
-- [ ] Server-autoritativer Wiedergabezustand, Drift-Korrektur, Uhrzeit-Abgleich, Nachzügler-Sync
-- [ ] Playlist: hinzufügen, entfernen, verschieben, als Nächstes; Voteskip mit Schwelle
-- [ ] Leader-Rolle (übernehmen/übergeben), Raum-Chat mit Emotes, Zuschauerliste
-- [ ] Mediathek (HQTube): Import aus `incoming/`, ffprobe, Direct-Play oder verlustfreies HLS-Remux
+- [x] Räume mit Inhaber + Moderatoren, Sichtbarkeit, Playlist-Regeln (offen / Mitglieder / nur Mods)
+- [x] Raumverzeichnis mit „Live"- und „Nächste Vorstellung"-Anzeige
+- [x] Quellen: YouTube, direkte Video-URLs, Dateien aus der Filebase, eigene Mediathek
+- [x] Server-autoritativer Wiedergabezustand, Drift-Korrektur, Uhrzeit-Abgleich, Nachzügler-Sync
+- [x] Playlist: hinzufügen, entfernen, verschieben, als Nächstes; Voteskip mit Schwelle
+- [x] Leader-Rolle (übernehmen/übergeben), Raum-Chat mit Emotes, Zuschauerliste
+- [x] Mediathek (HQTube): Import aus `incoming/`, ffprobe, Direct-Play oder verlustfreies HLS-Remux
       mit umschaltbaren Tonspuren, Transcode nur wenn nötig, Untertitel → WebVTT, Speicherlimit
-- [ ] Geplante Vorstellungen (HQTube): Line-up mit Pausen pro Film, Scheduler, neustartsichere Show-Engine
-- [ ] Showmaster-Konsole: Phase, Timecode, Ablauf, Transport, Overrides (jetzt starten, überspringen,
+- [x] Geplante Vorstellungen (HQTube): Line-up mit Pausen pro Film, Scheduler, neustartsichere Show-Engine
+- [x] Showmaster-Konsole: Phase, Timecode, Ablauf, Transport, Overrides (jetzt starten, überspringen,
       ±1 Min, Pause beenden, Show beenden); Vorprogramm-/Pausen-/Ende-Bildschirme mit Countdown
-- [ ] Raum-Moderation: Slow-Mode, Timeout/Bann im Raum, Flood-Schutz
-- [ ] Filmwünsche mit Abstimmung
-- [ ] Popout-Player und -Chat, Audio-Election (nur ein Fenster mit Ton), Join-Overlay (Autoplay)
+- [x] Raum-Moderation: Slow-Mode, Timeout/Bann im Raum, Flood-Schutz
+- [x] Filmwünsche mit Abstimmung
+- [x] Popout-Player und -Chat, Audio-Election (nur ein Fenster mit Ton), Join-Overlay (Autoplay)
 
 ## Phase 10 – Betrieb
 - [ ] README: Entwicklung (Windows) + Produktion (Linux, systemd, Reverse-Proxy mit WebSocket)

@@ -116,18 +116,56 @@ pub fn ffprobe_for(ffmpeg: &Path) -> PathBuf {
     ffmpeg.with_file_name(name)
 }
 
-/// Finds a usable ffmpeg (configured path or on PATH).
-pub async fn detect_ffmpeg(configured: Option<PathBuf>) -> Option<PathBuf> {
-    let candidate = configured.unwrap_or_else(|| PathBuf::from("ffmpeg"));
-    let ok = tokio::process::Command::new(&candidate)
+async fn runs(candidate: &Path) -> bool {
+    tokio::process::Command::new(candidate)
         .arg("-version")
         .stdout(std::process::Stdio::null())
         .stderr(std::process::Stdio::null())
         .status()
         .await
         .map(|s| s.success())
-        .unwrap_or(false);
-    ok.then_some(candidate)
+        .unwrap_or(false)
+}
+
+/// winget installs ffmpeg under `%LOCALAPPDATA%/Microsoft/WinGet/Packages/*/*/bin`,
+/// often without updating the PATH of already running shells.
+fn winget_candidates() -> Vec<PathBuf> {
+    let Some(local) = std::env::var_os("LOCALAPPDATA") else { return Vec::new() };
+    let root = PathBuf::from(local).join("Microsoft").join("WinGet");
+    let mut out = vec![root.join("Links").join("ffmpeg.exe")];
+    if let Ok(packages) = std::fs::read_dir(root.join("Packages")) {
+        let mut found: Vec<PathBuf> = packages
+            .flatten()
+            .filter(|p| p.file_name().to_string_lossy().to_lowercase().contains("ffmpeg"))
+            .filter_map(|p| std::fs::read_dir(p.path()).ok())
+            .flat_map(|dirs| dirs.flatten().map(|d| d.path().join("bin").join("ffmpeg.exe")))
+            .filter(|p| p.is_file())
+            .collect();
+        // Prefer the newest build.
+        found.sort_by_key(|p| std::fs::metadata(p).and_then(|m| m.modified()).ok());
+        found.reverse();
+        out.extend(found);
+    }
+    out
+}
+
+/// Finds a usable ffmpeg (configured path, PATH, or a winget install).
+pub async fn detect_ffmpeg(configured: Option<PathBuf>) -> Option<PathBuf> {
+    if let Some(path) = configured {
+        return runs(&path).await.then_some(path);
+    }
+    let default = PathBuf::from("ffmpeg");
+    if runs(&default).await {
+        return Some(default);
+    }
+    if cfg!(windows) {
+        for candidate in winget_candidates() {
+            if runs(&candidate).await {
+                return Some(candidate);
+            }
+        }
+    }
+    None
 }
 
 #[derive(Debug, Clone, Default)]

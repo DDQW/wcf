@@ -28,6 +28,8 @@ pub struct AppState {
     pub storage: Storage,
     /// ffmpeg binary, if available (video thumbnails, media library).
     pub ffmpeg: Option<PathBuf>,
+    /// Live watch rooms (playback clocks, shows).
+    pub watch: Arc<crate::watch_live::WatchLive>,
     site: Arc<RwLock<SiteCache>>,
 }
 
@@ -59,6 +61,7 @@ impl AppState {
             mailer,
             storage,
             ffmpeg,
+            watch: Arc::new(crate::watch_live::WatchLive::new()),
             site: Arc::new(RwLock::new(SiteCache {
                 settings: loaded,
                 welcome_html,

@@ -19,3 +19,6 @@ pub mod profile_ext;
 pub mod search;
 pub mod settings;
 pub mod settings_ext;
+pub mod watch;
+pub mod watch_console;
+pub mod watch_library;

@@ -249,6 +249,20 @@ impl Hub {
         })
     }
 
+    /// Connections of a user that follow a topic (e.g. to kick them).
+    pub fn user_conns_in_topic(&self, user_id: Uuid, topic: &Topic) -> Vec<ConnId> {
+        let st = self.inner.state.read().expect("hub poisoned");
+        st.users
+            .get(&user_id)
+            .map(|ids| {
+                ids.iter()
+                    .copied()
+                    .filter(|id| st.conns.get(id).is_some_and(|c| c.topics.contains(topic)))
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
     pub fn conn_user(&self, id: ConnId) -> Option<UserSummary> {
         let st = self.inner.state.read().expect("hub poisoned");
         st.conns.get(&id).and_then(|c| c.user.clone())

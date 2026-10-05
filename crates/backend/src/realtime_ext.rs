@@ -14,19 +14,24 @@ pub async fn can_subscribe(state: &AppState, user: Option<&AuthUser>, topic: &To
     match topic {
         Topic::Chat(id) => crate::chat::can_subscribe(&state.db, user, *id).await,
         Topic::Call(id) => crate::calls::can_subscribe(state, user, *id).await,
+        Topic::Watch(id) => crate::watch_live::can_subscribe(state, user, *id).await,
         _ => false,
     }
 }
 
-pub async fn on_join(state: &AppState, _conn: ConnId, _user: Option<&AuthUser>, topic: &Topic) {
-    if let Topic::Call(id) = topic {
-        crate::calls::on_join(state, *id).await;
+pub async fn on_join(state: &AppState, conn: ConnId, user: Option<&AuthUser>, topic: &Topic) {
+    match topic {
+        Topic::Call(id) => crate::calls::on_join(state, *id).await,
+        Topic::Watch(id) => crate::watch_live::on_join(state, conn, user, *id).await,
+        _ => {}
     }
 }
 
 pub async fn on_leave(state: &AppState, _conn: ConnId, _user: Option<&AuthUser>, topic: &Topic) {
-    if let Topic::Call(id) = topic {
-        crate::calls::on_leave(state, *id).await;
+    match topic {
+        Topic::Call(id) => crate::calls::on_leave(state, *id).await,
+        Topic::Watch(id) => crate::watch_live::on_leave(state, *id).await,
+        _ => {}
     }
 }
 
@@ -51,6 +56,9 @@ pub async fn dispatch(state: &AppState, conn: ConnId, user: Option<&AuthUser>, m
                 },
                 conn,
             );
+        }
+        ClientMsg::Module { module, payload } if module == shared::watch::MODULE => {
+            crate::watch_live::dispatch(state, conn, user, payload).await;
         }
         _ => {}
     }

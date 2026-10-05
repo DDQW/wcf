@@ -79,6 +79,8 @@ async fn main() {
         .await
         .expect("failed to initialise app state");
     backend::jobs::spawn(app_state.clone());
+    backend::watch_media::start(app_state.clone()).await;
+    backend::watch_live::start(app_state.clone());
 
     let state = ServerState {
         leptos: leptos_options.clone(),

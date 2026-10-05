@@ -22,6 +22,9 @@ use crate::pages::notifications::NotificationsPage;
 use crate::pages::profile::ProfilePage;
 use crate::pages::search::SearchPage;
 use crate::pages::settings::SettingsPage;
+use crate::pages::watch::{WatchChatPopout, WatchIndex, WatchPlayerPopout, WatchRoomPage};
+use crate::pages::watch_console::WatchConsolePage;
+use crate::pages::watch_library::WatchLibraryPage;
 
 #[component]
 pub fn AppRoutes() -> impl IntoView {
@@ -37,6 +40,13 @@ pub fn AppRoutes() -> impl IntoView {
             <Route path=path!("/settings") view=SettingsPage/>
             <Route path=path!("/notifications") view=NotificationsPage/>
             <Route path=path!("/search") view=SearchPage/>
+
+            <Route path=path!("/watch") view=WatchIndex/>
+            <Route path=path!("/watch/library") view=WatchLibraryPage/>
+            <Route path=path!("/watch/:slug") view=WatchRoomPage/>
+            <Route path=path!("/watch/:slug/console") view=WatchConsolePage/>
+            <Route path=path!("/watch/:slug/player") view=WatchPlayerPopout/>
+            <Route path=path!("/watch/:slug/chat") view=WatchChatPopout/>
 
             <Route path=path!("/calls") view=CallsPage/>
             <Route path=path!("/calls/direct/:id") view=DirectCallPage/>
@@ -100,6 +110,9 @@ pub fn module_nav() -> impl IntoView {
         </Show>
         <Show when=move || m().blogs>
             <NavItem href="/blogs" icon="book-open" label="Blogs"/>
+        </Show>
+        <Show when=move || m().watch && session.logged_in()>
+            <NavItem href="/watch" icon="tv" label="Kino"/>
         </Show>
         <Show when=move || m().calls && session.logged_in()>
             <NavItem href="/calls" icon="video" label="Anrufe"/>

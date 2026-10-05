@@ -29,12 +29,22 @@ pub fn Shell() -> impl IntoView {
         }
     });
 
+    // Popout windows (watch player / chat) render without the shell.
+    let bare = Memo::new(move |_| {
+        let p = location.pathname.get();
+        p.starts_with("/watch/") && (p.ends_with("/player") || p.ends_with("/chat"))
+    });
+
     view! {
-        <div class="app" class:sidebar-open=move || sidebar_open.get()>
-            <Sidebar/>
-            <div class="sidebar-backdrop" on:click=move |_| sidebar_open.set(false)></div>
+        <div class="app" class:sidebar-open=move || sidebar_open.get() class:app-bare=move || bare.get()>
+            <Show when=move || !bare.get()>
+                <Sidebar/>
+                <div class="sidebar-backdrop" on:click=move |_| sidebar_open.set(false)></div>
+            </Show>
             <div class="main">
-                <Topbar sidebar_open=sidebar_open/>
+                <Show when=move || !bare.get()>
+                    <Topbar sidebar_open=sidebar_open/>
+                </Show>
                 <main class="content" id="content">
                     <AppRoutes/>
                 </main>

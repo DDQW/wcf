@@ -41,6 +41,10 @@ pub mod storage;
 mod stats_ext;
 pub mod subjects;
 pub mod users;
+pub mod watch;
+pub mod watch_engine;
+pub mod watch_live;
+pub mod watch_media;
 
 use axum::extract::FromRef;
 use axum::routing::{get, post};
@@ -75,6 +79,8 @@ where
         .route("/files/{id}/download", get(files_http::serve_download))
         .route("/files/{id}/thumb", get(files_http::serve_thumb))
         .route("/files/{id}/preview", get(files_http::serve_preview))
+        .route("/media/watch/src/{id}", get(watch_media::serve_source))
+        .route("/media/watch/{id}/{*path}", get(watch_media::serve_media))
         .route("/blogs/feed.xml", get(blogs::rss_all_handler))
         .route("/api/cms/{type_slug}", get(cms::api_list))
         .route("/api/cms/{type_slug}/{slug}", get(cms::api_get))

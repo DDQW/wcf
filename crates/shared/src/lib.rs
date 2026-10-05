@@ -17,6 +17,7 @@ pub mod reaction;
 pub mod search;
 pub mod user;
 pub mod util;
+pub mod watch;
 pub mod ws;
 
 pub use admin::{AdminStats, AdminUserRow, ModuleToggles, PublicSiteInfo, SiteSettings};

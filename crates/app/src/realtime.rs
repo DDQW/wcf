@@ -34,6 +34,8 @@ mod client {
         pub retry: u32,
         pub started: bool,
         pub closures: Vec<Closure<dyn FnMut(JsValue)>>,
+        /// Smallest round trip seen recently; its sample wins (NTP-style).
+        pub best_rtt: f64,
     }
 
     pub type Shared = Rc<RefCell<Inner>>;
@@ -226,15 +228,26 @@ impl Realtime {
             } => {
                 self.online.set(online.iter().copied().collect());
                 self.clock_offset.set(server_ts - crate::state::now_ms());
+                self.inner.get_value().borrow_mut().best_rtt = f64::INFINITY;
                 self.session.unread.set(*unread_notifications);
                 self.epoch.update(|e| *e += 1);
+                self.sync_clock();
             }
             ServerMsg::Pong { client_ts, server_ts } => {
                 let now = crate::state::now_ms();
                 let rtt = (now - client_ts).max(0.0);
                 let sample = server_ts + rtt / 2.0 - now;
-                // Exponential smoothing to dampen jitter.
-                self.clock_offset.update(|o| *o = *o * 0.7 + sample * 0.3);
+                let inner = self.inner.get_value();
+                let best = inner.borrow().best_rtt;
+                if rtt <= best * 1.25 {
+                    // A fast round trip is the most trustworthy sample.
+                    self.clock_offset.set(sample);
+                    inner.borrow_mut().best_rtt = rtt.max(1.0);
+                } else {
+                    // Slow samples only nudge; the best RTT ages so we adapt.
+                    self.clock_offset.update(|o| *o = *o * 0.9 + sample * 0.1);
+                    inner.borrow_mut().best_rtt = best * 1.1;
+                }
             }
             ServerMsg::Presence { user_id, online } => {
                 self.online.update(|s| {
@@ -260,6 +273,20 @@ impl Realtime {
             .collect();
         for h in handlers {
             h(&msg);
+        }
+    }
+
+    /// Sends a short burst of clock probes (e.g. when a watch room opens).
+    pub fn sync_clock(&self) {
+        #[cfg(feature = "hydrate")]
+        {
+            let rt = *self;
+            leptos::task::spawn_local(async move {
+                for _ in 0..5 {
+                    rt.send(&ClientMsg::Ping { client_ts: crate::state::now_ms() });
+                    crate::components::common::sleep_ms(200).await;
+                }
+            });
         }
     }
 

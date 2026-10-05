@@ -17,6 +17,11 @@ pub struct Config {
     pub livekit: Option<LiveKitConfig>,
     /// Optional ffmpeg binary for video thumbnails / durations.
     pub ffmpeg: Option<PathBuf>,
+    /// Folder whose video files the watch library offers for import
+    /// (default `DATA_DIR/watch/incoming`).
+    pub watch_import_dir: Option<PathBuf>,
+    /// Cap on packaged watch media in bytes (`WATCH_MAX_MEDIA_GB`).
+    pub watch_max_media_bytes: Option<u64>,
 }
 
 #[derive(Debug, Clone)]
@@ -116,6 +121,11 @@ impl Config {
             smtp,
             livekit,
             ffmpeg,
+            watch_import_dir: env("WATCH_IMPORT_DIR").map(PathBuf::from),
+            watch_max_media_bytes: env("WATCH_MAX_MEDIA_GB")
+                .and_then(|v| v.parse::<f64>().ok())
+                .filter(|gb| gb.is_finite() && *gb > 0.0)
+                .map(|gb| (gb * 1024.0 * 1024.0 * 1024.0) as u64),
         }
     }
 

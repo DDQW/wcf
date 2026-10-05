@@ -13,6 +13,7 @@ pub mod gallery;
 pub mod moderation;
 pub mod notifications;
 pub mod users;
+pub mod watch;
 
 #[cfg(feature = "ssr")]
 mod hooks {
