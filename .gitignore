@@ -1,0 +1,6 @@
+/target
+/crates/*/target
+.env
+node_modules/
+*.pdb
+.claude/
