@@ -2,6 +2,7 @@ pub mod admin;
 pub mod admin_ext;
 pub mod auth;
 pub mod blog;
+pub mod calls;
 pub mod chat;
 pub mod chat_ext;
 pub mod cms;

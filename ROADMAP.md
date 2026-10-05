@@ -86,11 +86,11 @@ Legende: `[x]` fertig · `[ ]` offen
 - [x] Kommentare, Reaktionen, Bildbeschreibungen, neueste Bilder
 
 ## Phase 8 – Video-/Audio-Calls (SFU: LiveKit)
-- [ ] Token-Ausgabe durch Axum (JWT), LiveKit als eigener Dienst
-- [ ] 1:1-Anrufe mit Klingeln (annehmen/ablehnen/verpasst) über den Realtime-Hub
-- [ ] Räume (dauerhaft + spontan), Sichtbarkeit, Teilnehmerliste mit Live-Anzahl
-- [ ] Mikro/Kamera an/aus, Bildschirmfreigabe, Geräteauswahl, aktiver Sprecher, Raster-Layout
-- [ ] Moderation: Teilnehmer stummschalten / entfernen; Chat im Call
+- [x] Token-Ausgabe durch Axum (JWT), LiveKit als eigener Dienst
+- [x] 1:1-Anrufe mit Klingeln (annehmen/ablehnen/verpasst) über den Realtime-Hub
+- [x] Räume (dauerhaft + spontan), Sichtbarkeit, Teilnehmerliste mit Live-Anzahl
+- [x] Mikro/Kamera an/aus, Bildschirmfreigabe, Geräteauswahl, aktiver Sprecher, Raster-Layout
+- [x] Moderation: Teilnehmer stummschalten / entfernen; Chat im Call
 
 ## Phase 9 – Watch & Kino (cytu.be-Stil + HQTube-Integration)
 HQTube (`hqtube`, bisher Node/React/SQLite) wird nach Rust portiert und hier aufgenommen –
@@ -115,4 +115,5 @@ ein Paket, ein Binary, eine Datenbank.
 - [ ] LiveKit-Konfiguration, Backups (pg_dump + Datenverzeichnis)
 - [ ] Hintergrundjobs: geplante Beiträge, Papierkorb leeren, abgelaufene Freigaben, Sessions
 - [ ] Tests (Unit + Integrationstests für Kernlogik), clippy sauber
+- [ ] Cache-Busting für CSS/JS/WASM im Release-Build (`hash-files`), lange Cache-Header für `/pkg`
 - [ ] Release-Paket + Setup-Skript (wie bei HQTube), Push nach github.com/DDQW/wcf (`master`)

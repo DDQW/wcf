@@ -5,6 +5,7 @@
 pub mod admin;
 pub mod auth;
 pub mod blogs;
+pub mod calls;
 pub mod chat;
 pub mod cms;
 pub mod comments;
@@ -18,6 +19,7 @@ pub mod gallery;
 pub mod http;
 pub mod hub;
 pub mod jobs;
+pub mod livekit;
 mod jobs_ext;
 pub mod mail;
 pub mod maintenance;

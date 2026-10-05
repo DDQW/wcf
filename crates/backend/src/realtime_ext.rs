@@ -13,13 +13,22 @@ use crate::state::AppState;
 pub async fn can_subscribe(state: &AppState, user: Option<&AuthUser>, topic: &Topic) -> bool {
     match topic {
         Topic::Chat(id) => crate::chat::can_subscribe(&state.db, user, *id).await,
+        Topic::Call(id) => crate::calls::can_subscribe(state, user, *id).await,
         _ => false,
     }
 }
 
-pub async fn on_join(_state: &AppState, _conn: ConnId, _user: Option<&AuthUser>, _topic: &Topic) {}
+pub async fn on_join(state: &AppState, _conn: ConnId, _user: Option<&AuthUser>, topic: &Topic) {
+    if let Topic::Call(id) = topic {
+        crate::calls::on_join(state, *id).await;
+    }
+}
 
-pub async fn on_leave(_state: &AppState, _conn: ConnId, _user: Option<&AuthUser>, _topic: &Topic) {}
+pub async fn on_leave(state: &AppState, _conn: ConnId, _user: Option<&AuthUser>, topic: &Topic) {
+    if let Topic::Call(id) = topic {
+        crate::calls::on_leave(state, *id).await;
+    }
+}
 
 pub async fn on_offline(_state: &AppState, _user_id: Uuid) {}
 

@@ -66,7 +66,7 @@ impl Access {
 
 pub async fn access(db: &PgPool, channel_id: Uuid, user_id: Uuid) -> Result<Option<Access>> {
     let row = sqlx::query(
-        "SELECT c.kind, c.is_archived, c.name, m.role FROM chat_channels c \
+        "SELECT c.kind, c.is_archived, c.name, c.dm_key, m.role FROM chat_channels c \
          LEFT JOIN chat_members m ON m.channel_id = c.id AND m.user_id = $2 WHERE c.id = $1",
     )
     .bind(channel_id)
@@ -76,6 +76,19 @@ pub async fn access(db: &PgPool, channel_id: Uuid, user_id: Uuid) -> Result<Opti
     let Some(r) = row else { return Ok(None) };
     let kind: String = r.try_get("kind")?;
     let role: Option<String> = r.try_get("role")?;
+    // Chats of call/watch rooms follow the room's access rules.
+    if kind == "room" {
+        let key: Option<String> = r.try_get("dm_key")?;
+        let room = key
+            .as_deref()
+            .and_then(|k| k.strip_prefix("room:"))
+            .and_then(|id| Uuid::parse_str(id).ok());
+        if let Some(room_id) = room {
+            if !crate::extensions::room_channel_allowed(db, room_id, user_id).await {
+                return Ok(None);
+            }
+        }
+    }
     Ok(Some(Access {
         kind: ChannelKind::parse(&kind),
         is_archived: r.try_get("is_archived")?,

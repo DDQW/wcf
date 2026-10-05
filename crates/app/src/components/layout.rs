@@ -40,6 +40,7 @@ pub fn Shell() -> impl IntoView {
                 </main>
             </div>
             <ToastHost/>
+            <crate::pages::calls::IncomingCallHost/>
         </div>
     }
 }

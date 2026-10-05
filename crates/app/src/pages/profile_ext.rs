@@ -24,5 +24,6 @@ pub fn profile_actions(user_id: Uuid) -> impl IntoView {
         <Show when=move || session.site.with(|s| s.modules.chat)>
             <button class="btn btn-primary" on:click=message.clone()><Icon name="message-circle" size=16/>"Nachricht"</button>
         </Show>
+        <crate::pages::calls::CallButtons user_id=user_id/>
     }
 }

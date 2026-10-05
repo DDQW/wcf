@@ -8,6 +8,7 @@ use crate::pages::admin::{
     AdminReports, AdminSettings, AdminUsers,
 };
 use crate::pages::blog::{BlogEditorPage, BlogPage, BlogPostPage, BlogTagPage, BlogsIndex, MyBlogPage};
+use crate::pages::calls::{CallRoomPage, CallsPage, DirectCallPage};
 use crate::pages::chat::ChatPage;
 use crate::pages::cms::{CmsEditorPage, CmsEntryPage, CmsIndex, CmsListPage, CmsStaticPage};
 use crate::pages::files::{FilesPage, SharePage};
@@ -36,6 +37,10 @@ pub fn AppRoutes() -> impl IntoView {
             <Route path=path!("/settings") view=SettingsPage/>
             <Route path=path!("/notifications") view=NotificationsPage/>
             <Route path=path!("/search") view=SearchPage/>
+
+            <Route path=path!("/calls") view=CallsPage/>
+            <Route path=path!("/calls/direct/:id") view=DirectCallPage/>
+            <Route path=path!("/calls/:id") view=CallRoomPage/>
 
             <Route path=path!("/gallery") view=GalleryIndex/>
             <Route path=path!("/gallery/album/:id") view=AlbumPage ssr=SsrMode::Async/>
@@ -95,6 +100,9 @@ pub fn module_nav() -> impl IntoView {
         </Show>
         <Show when=move || m().blogs>
             <NavItem href="/blogs" icon="book-open" label="Blogs"/>
+        </Show>
+        <Show when=move || m().calls && session.logged_in()>
+            <NavItem href="/calls" icon="video" label="Anrufe"/>
         </Show>
         <Show when=move || m().gallery>
             <NavItem href="/gallery" icon="image" label="Galerie"/>

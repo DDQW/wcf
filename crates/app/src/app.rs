@@ -20,6 +20,7 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <script>
                     "try{var t=localStorage.getItem('theme');if(t&&t!=='system')document.documentElement.dataset.theme=t;}catch(e){}"
                 </script>
+                <script src="/js/wcf-call.js" defer></script>
                 <AutoReload options=options.clone()/>
                 <HydrationScripts options/>
                 <MetaTags/>

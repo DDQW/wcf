@@ -132,3 +132,11 @@ pub async fn subject_owner(state: &AppState, st: SubjectType, id: Uuid) -> Resul
         _ => Ok(None),
     }
 }
+
+/// Access to the chat channel of a call/watch room (`room:<id>`).
+pub async fn room_channel_allowed(db: &sqlx::PgPool, room_id: Uuid, user_id: Uuid) -> bool {
+    if let Some(allowed) = crate::calls::room_channel_allowed(db, room_id, user_id).await {
+        return allowed;
+    }
+    true
+}
