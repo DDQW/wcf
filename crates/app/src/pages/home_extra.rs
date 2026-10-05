@@ -8,6 +8,21 @@ use crate::components::{Avatar, Icon, TimeAgo};
 #[allow(non_snake_case)]
 pub fn HomeExtraView(extra: HomeExtra) -> impl IntoView {
     view! {
+        {(!extra.latest_images.is_empty()).then(|| view! {
+            <section class="card">
+                <div class="card-head">
+                    <h2><Icon name="image"/>"Neue Bilder"</h2>
+                    <a href="/gallery?tab=latest" class="small">"Galerie"</a>
+                </div>
+                <div class="home-images">
+                    {extra.latest_images.into_iter().map(|i| view! {
+                        <a href=i.url() title=i.display_title()>
+                            <img src=i.thumb_url() alt=i.display_title() loading="lazy"/>
+                        </a>
+                    }).collect_view()}
+                </div>
+            </section>
+        })}
         {(!extra.latest_posts.is_empty()).then(|| view! {
             <section class="card">
                 <div class="card-head">

@@ -7,6 +7,7 @@ pub mod chat_ext;
 pub mod cms;
 pub mod files;
 pub mod forum;
+pub mod gallery;
 pub mod home;
 pub mod home_extra;
 pub mod members;

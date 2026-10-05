@@ -8,6 +8,7 @@ pub mod chat;
 pub mod cms;
 pub mod files;
 pub mod forum;
+pub mod gallery;
 pub mod moderation;
 pub mod notification;
 pub mod pagination;

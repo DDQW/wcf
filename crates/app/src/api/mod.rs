@@ -8,6 +8,7 @@ pub mod chat;
 pub mod cms;
 pub mod files;
 pub mod forum;
+pub mod gallery;
 pub mod moderation;
 pub mod notifications;
 pub mod users;
@@ -43,11 +44,23 @@ mod hooks {
 
     /// Lets later modules add items to a user's activity stream.
     pub async fn extend_activity(
-        _st: &AppState,
-        _viewer: Option<&AuthUser>,
-        _user_id: Uuid,
-        _items: &mut Vec<ActivityItem>,
+        st: &AppState,
+        viewer: Option<&AuthUser>,
+        user_id: Uuid,
+        items: &mut Vec<ActivityItem>,
     ) {
+        if st.settings().modules.gallery {
+            if let Ok(page) = backend::gallery::latest_images(&st.db, viewer, Some(user_id), None, Some(5)).await {
+                items.extend(page.items.into_iter().map(|i| ActivityItem {
+                    icon: "image".into(),
+                    label: "Bild hochgeladen".into(),
+                    title: i.display_title(),
+                    excerpt: i.description.clone(),
+                    link: i.url(),
+                    created_at: i.created_at,
+                }));
+            }
+        }
     }
 
     /// Lets later modules add sections to the start page.
@@ -66,6 +79,11 @@ mod hooks {
             )
             .await?
             .items;
+        }
+        if st.settings().modules.gallery {
+            data.extra.latest_images = backend::gallery::latest_images(&st.db, _viewer, None, None, Some(8))
+                .await?
+                .items;
         }
         Ok(())
     }

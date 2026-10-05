@@ -37,6 +37,13 @@ impl UploadQueue {
             .update(|v| v.retain(|i| !i.done.get_untracked() && i.error.get_untracked().is_none()));
     }
 
+    pub fn busy_untracked(&self) -> bool {
+        self.items.with_untracked(|v| {
+            v.iter()
+                .any(|i| !i.done.get_untracked() && i.error.get_untracked().is_none())
+        })
+    }
+
     pub fn busy(&self) -> bool {
         self.items
             .with(|v| v.iter().any(|i| !i.done.get() && i.error.get().is_none()))

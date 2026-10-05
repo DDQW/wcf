@@ -96,7 +96,7 @@ fn ProfileContent(p: ProfileView, on_change: Callback<()>) -> impl IntoView {
             <div class="stat"><span class="stat-value">{stats.topics}</span><span class="stat-label">"Themen"</span></div>
             <div class="stat"><span class="stat-value">{stats.posts}</span><span class="stat-label">"Beiträge"</span></div>
             <div class="stat"><span class="stat-value">{stats.blog_posts}</span><span class="stat-label">"Blogposts"</span></div>
-            <div class="stat"><span class="stat-value">{stats.images}</span><span class="stat-label">"Bilder"</span></div>
+            <a class="stat" href=format!("/gallery?tab=latest&user={user_id}")><span class="stat-value">{stats.images}</span><span class="stat-label">"Bilder"</span></a>
             <div class="stat"><span class="stat-value">{stats.reactions_received}</span><span class="stat-label">"Reaktionen"</span></div>
         </div>
 

@@ -32,6 +32,8 @@ pub async fn lookup(
         SubjectType::BlogPost => crate::blogs::subject_info(&state.db, viewer, id).await,
         SubjectType::Comment => crate::comments::subject_info(state, viewer, id).await,
         SubjectType::CmsEntry => crate::cms::subject_info(state, viewer, id).await,
+        SubjectType::GalleryImage => crate::gallery::image_subject_info(&state.db, viewer, id).await,
+        SubjectType::GalleryAlbum => crate::gallery::album_subject_info(&state.db, viewer, id).await,
         _ => Ok(None),
     }
 }
@@ -42,6 +44,9 @@ pub async fn file_access(state: &AppState, rec: &FileRecord, viewer: Option<&Aut
     match (rec.view.purpose, rec.context_id) {
         (shared::files::FilePurpose::Chat, Some(channel)) => {
             crate::chat::attachment_access(&state.db, rec.view.id, channel, viewer).await
+        }
+        (shared::files::FilePurpose::Gallery, Some(album)) => {
+            crate::gallery::file_access(&state.db, album, viewer).await
         }
         _ => false,
     }
@@ -61,7 +66,27 @@ pub async fn check_upload_context(
                 .ok_or_else(|| Error::invalid("Kanal für den Anhang fehlt."))?;
             Ok(Some(crate::chat::upload_visibility(&state.db, user, channel).await?))
         }
+        shared::files::FilePurpose::Gallery => {
+            if !state.settings().modules.gallery {
+                return Err(Error::invalid("Die Galerie ist deaktiviert."));
+            }
+            Ok(Some(crate::gallery::upload_visibility(&state.db, user, meta).await?))
+        }
         _ => Ok(None),
+    }
+}
+
+/// Runs after a file was stored (e.g. registers gallery images). An error
+/// rejects the upload; the hook must clean up the file itself.
+pub async fn after_ingest(
+    state: &AppState,
+    user: &AuthUser,
+    meta: &UploadMeta,
+    view: &shared::files::FileView,
+) -> Result<()> {
+    match meta.purpose {
+        shared::files::FilePurpose::Gallery => crate::gallery::after_ingest(state, user, meta, view).await,
+        _ => Ok(()),
     }
 }
 
@@ -84,6 +109,8 @@ pub async fn moderator_delete(
         SubjectType::BlogPost => crate::blogs::delete_post(_state, _actor, id).await,
         SubjectType::Comment => crate::comments::delete(_state, _actor, id).await,
         SubjectType::CmsEntry => crate::cms::delete_entry(_state, _actor, id).await.map(|_| ()),
+        SubjectType::GalleryImage => crate::gallery::delete_image(_state, _actor, id).await,
+        SubjectType::GalleryAlbum => crate::gallery::delete_album(_state, _actor, id).await,
         _ => Err(Error::invalid("Dieser Inhaltstyp kann hier nicht gelöscht werden.")),
     }
 }
@@ -92,6 +119,7 @@ pub async fn moderator_delete(
 pub async fn comments_allowed(state: &AppState, st: SubjectType, id: Uuid) -> Result<bool> {
     match st {
         SubjectType::CmsEntry => crate::cms::comments_allowed(&state.db, id).await,
+        SubjectType::GalleryImage => Ok(state.settings().modules.gallery),
         _ => Ok(false),
     }
 }
@@ -100,6 +128,7 @@ pub async fn comments_allowed(state: &AppState, st: SubjectType, id: Uuid) -> Re
 pub async fn subject_owner(state: &AppState, st: SubjectType, id: Uuid) -> Result<Option<Uuid>> {
     match st {
         SubjectType::CmsEntry => crate::cms::owner_of(&state.db, id).await,
+        SubjectType::GalleryImage => crate::gallery::image_owner(&state.db, id).await,
         _ => Ok(None),
     }
 }

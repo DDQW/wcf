@@ -40,6 +40,22 @@ pub fn kind_query<'a>(
             qb.push(")");
             Some(qb)
         }
+        SearchKind::GalleryImage => {
+            qb.push(
+                "FROM gallery_images i JOIN gallery_albums al ON al.id = i.album_id JOIN files f ON f.id = i.file_id                  JOIN users a ON a.id = i.owner_id, websearch_to_tsquery('german', ",
+            );
+            qb.push_bind(query);
+            qb.push(") q WHERE f.deleted_at IS NULL AND (i.search @@ q OR position(lower(");
+            qb.push_bind(query);
+            qb.push(") in lower(al.title)) > 0) AND (al.visibility = 'public' OR (al.visibility = 'members' AND ");
+            qb.push_bind(viewer.is_some());
+            qb.push(") OR al.owner_id = ");
+            qb.push_bind(viewer.map(|v| v.id));
+            qb.push(" OR ");
+            qb.push_bind(viewer.is_some_and(|v| v.is_mod()));
+            qb.push(")");
+            Some(qb)
+        }
         SearchKind::BlogPost => {
             qb.push(
                 "FROM blog_posts p JOIN users a ON a.id = p.author_id, websearch_to_tsquery('german', ",
@@ -73,6 +89,9 @@ pub fn hit_select(kind: SearchKind, author: &str) -> String {
             "e.id, e.title, e.published_at AS created_at, {author}, t.name AS hl, \
              CASE WHEN t.is_page_type THEN '/p/' || e.slug ELSE '/c/' || t.slug || '/' || e.slug END AS link, \
              NULL::text AS thumb, ts_rank(e.search, q) AS rank"
+        ),
+        SearchKind::GalleryImage => format!(
+            "i.id, CASE WHEN i.title <> '' THEN i.title ELSE f.name END AS title, i.created_at, {author},              'Album: ' || al.title AS hl, '/gallery/image/' || i.id AS link,              '/files/' || i.file_id || '/thumb' AS thumb, ts_rank(i.search, q) AS rank"
         ),
         SearchKind::BlogPost => format!(
             "p.id, p.title, p.published_at AS created_at, {author}, \

@@ -14,6 +14,7 @@ pub mod extensions;
 pub mod files;
 pub mod files_http;
 pub mod forum;
+pub mod gallery;
 pub mod http;
 pub mod hub;
 pub mod jobs;

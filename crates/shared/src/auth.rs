@@ -44,4 +44,5 @@ pub struct HomeData {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct HomeExtra {
     pub latest_posts: Vec<crate::blog::BlogPostItem>,
+    pub latest_images: Vec<crate::gallery::ImageView>,
 }

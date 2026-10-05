@@ -166,7 +166,13 @@ pub async fn profile_stats(db: &PgPool, user_id: Uuid) -> Result<ProfileStats> {
            (SELECT count(*) FROM forum_posts WHERE author_id = $1 AND NOT is_deleted) AS posts, \
            (SELECT count(*) FROM reactions r JOIN forum_posts p \
               ON r.subject_type = 'forum_post' AND r.subject_id = p.id \
-              WHERE p.author_id = $1) AS reactions_received",
+              WHERE p.author_id = $1) + \
+           (SELECT count(*) FROM reactions r JOIN blog_posts b \
+              ON r.subject_type = 'blog_post' AND r.subject_id = b.id \
+              WHERE b.author_id = $1) + \
+           (SELECT count(*) FROM reactions r JOIN gallery_images g \
+              ON r.subject_type = 'gallery_image' AND r.subject_id = g.id \
+              WHERE g.owner_id = $1) AS reactions_received",
     )
     .bind(user_id)
     .fetch_one(db)
@@ -175,7 +181,7 @@ pub async fn profile_stats(db: &PgPool, user_id: Uuid) -> Result<ProfileStats> {
         topics: r.try_get("topics")?,
         posts: r.try_get("posts")?,
         blog_posts: crate::blogs::user_post_count(db, user_id).await?,
-        images: 0,
+        images: crate::gallery::user_image_count(db, user_id).await?,
         reactions_received: r.try_get("reactions_received")?,
     })
 }

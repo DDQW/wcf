@@ -80,10 +80,10 @@ Legende: `[x]` fertig · `[ ]` offen
 - [x] Navigationsmenü-Editor, headless JSON-API (`/api/cms/...`)
 
 ## Phase 7 – Galerie
-- [ ] Alben (persönlich + Community), Sichtbarkeit, Titelbild, Reihenfolge
-- [ ] Bild-Upload mit automatischen Thumbnails, EXIF (Kamera, Aufnahmedatum; kein GPS), Auto-Rotation
-- [ ] Lightbox mit Tastatur-Navigation, Diashow, Original-Download
-- [ ] Kommentare, Reaktionen, Bildbeschreibungen, neueste Bilder
+- [x] Alben (persönlich + Community), Sichtbarkeit, Titelbild, Reihenfolge
+- [x] Bild-Upload mit automatischen Thumbnails, EXIF (Kamera, Aufnahmedatum; kein GPS), Auto-Rotation
+- [x] Lightbox mit Tastatur-Navigation, Diashow, Original-Download
+- [x] Kommentare, Reaktionen, Bildbeschreibungen, neueste Bilder
 
 ## Phase 8 – Video-/Audio-Calls (SFU: LiveKit)
 - [ ] Token-Ausgabe durch Axum (JWT), LiveKit als eigener Dienst

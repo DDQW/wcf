@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_router::components::{ParentRoute, Route, Routes};
 use leptos_router::path;
+use leptos_router::SsrMode;
 
 use crate::pages::admin::{
     AdminCms, AdminCmsType, AdminDashboard, AdminForum, AdminLayout, AdminLog, AdminMenu,
@@ -10,6 +11,7 @@ use crate::pages::blog::{BlogEditorPage, BlogPage, BlogPostPage, BlogTagPage, Bl
 use crate::pages::chat::ChatPage;
 use crate::pages::cms::{CmsEditorPage, CmsEntryPage, CmsIndex, CmsListPage, CmsStaticPage};
 use crate::pages::files::{FilesPage, SharePage};
+use crate::pages::gallery::{AlbumPage, GalleryIndex, ImagePage};
 use crate::pages::auth::{ForgotPasswordPage, LoginPage, RegisterPage, ResetPasswordPage};
 use crate::pages::forum::{CategoryPage, ForumIndex, NewTopicPage, TagPage, TopicPage};
 use crate::pages::home::HomePage;
@@ -35,10 +37,14 @@ pub fn AppRoutes() -> impl IntoView {
             <Route path=path!("/notifications") view=NotificationsPage/>
             <Route path=path!("/search") view=SearchPage/>
 
+            <Route path=path!("/gallery") view=GalleryIndex/>
+            <Route path=path!("/gallery/album/:id") view=AlbumPage ssr=SsrMode::Async/>
+            <Route path=path!("/gallery/image/:id") view=ImagePage ssr=SsrMode::Async/>
+
             <Route path=path!("/blogs") view=BlogsIndex/>
             <Route path=path!("/blogs/tag/:tag") view=BlogTagPage/>
             <Route path=path!("/blog/:username") view=BlogPage/>
-            <Route path=path!("/blog/:username/:slug") view=BlogPostPage/>
+            <Route path=path!("/blog/:username/:slug") view=BlogPostPage ssr=SsrMode::Async/>
             <Route path=path!("/me/blog") view=MyBlogPage/>
             <Route path=path!("/me/blog/new") view=BlogEditorPage/>
             <Route path=path!("/me/blog/edit/:id") view=BlogEditorPage/>
@@ -90,6 +96,9 @@ pub fn module_nav() -> impl IntoView {
         <Show when=move || m().blogs>
             <NavItem href="/blogs" icon="book-open" label="Blogs"/>
         </Show>
+        <Show when=move || m().gallery>
+            <NavItem href="/gallery" icon="image" label="Galerie"/>
+        </Show>
         <Show when=move || m().files && session.logged_in()>
             <NavItem href="/files" icon="hard-drive" label="Dateien"/>
         </Show>
@@ -106,6 +115,9 @@ pub fn user_menu_items() -> impl IntoView {
     view! {
         <Show when=move || session.site.with(|s| s.modules.blogs)>
             <a class="menu-item" href="/me/blog"><Icon name="book-open" size=16/>"Mein Blog"</a>
+        </Show>
+        <Show when=move || session.site.with(|s| s.modules.gallery)>
+            <a class="menu-item" href="/gallery?tab=mine"><Icon name="image" size=16/>"Meine Alben"</a>
         </Show>
         <Show when=move || session.site.with(|s| s.modules.files)>
             <a class="menu-item" href="/files"><Icon name="hard-drive" size=16/>"Meine Dateien"</a>

@@ -252,10 +252,12 @@ pub async fn ingest(state: &AppState, user: &AuthUser, meta: &UploadMeta, tmp: T
         let key2 = key.clone();
         tokio::spawn(async move { process_av_file(&st, id, &key2).await });
     }
-    get_record(&state.db, id)
+    let view = get_record(&state.db, id)
         .await?
         .map(|r| r.view)
-        .ok_or(Error::NotFound("Datei"))
+        .ok_or(Error::NotFound("Datei"))?;
+    crate::extensions::after_ingest(state, user, meta, &view).await?;
+    Ok(view)
 }
 
 async fn process_image_file(state: &AppState, id: Uuid, key: &str) {
@@ -686,7 +688,7 @@ pub async fn restore_files(state: &AppState, user: &AuthUser, ids: &[Uuid]) -> R
 }
 
 /// Deletes file rows for good and removes blobs nobody references anymore.
-async fn purge_records(state: &AppState, recs: &[FileRecord]) -> Result<()> {
+pub(crate) async fn purge_records(state: &AppState, recs: &[FileRecord]) -> Result<()> {
     let ids: Vec<Uuid> = recs.iter().map(|r| r.view.id).collect();
     sqlx::query("DELETE FROM files WHERE id = ANY($1)")
         .bind(&ids)
