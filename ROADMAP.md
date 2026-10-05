@@ -17,7 +17,7 @@ Legende: `[x]` fertig · `[ ]` offen
 - [x] Einheitliche Fehler (`AppError`), deutsche Fehlermeldungen
 - [x] Markdown: Sanitizing (XSS-Schutz), @Mentions, Code-Blöcke, Tabellen, Aufgabenlisten
 - [x] Rollen (Admin / Moderator / Mitglied), Sperren mit Dauer + Grund, Deaktivieren
-- [x] Profile: Bio, Ort, Website, Mitglied seit, zuletzt online, Statistiken (Avatar-Upload folgt mit der Filebase)
+- [x] Profile: Avatar, Bio, Ort, Website, Mitglied seit, zuletzt online, Statistiken
 - [x] Einstellungen: Anzeigename, E-Mail, Passwort ändern, Theme, Benachrichtigungs-Optionen
 - [x] Passwort-Reset (E-Mail per SMTP, falls konfiguriert – sonst Reset-Link durch Admin)
 - [ ] Einladungscodes: Registrierung optional nur mit Code (aus HQTube übernommen)
@@ -45,14 +45,14 @@ Legende: `[x]` fertig · `[ ]` offen
 - [x] Editor mit Toolbar, Vorschau, @Mention-Vorschläge
 
 ## Phase 3 – Filebase
-- [ ] Upload (Mehrfach, Drag & Drop, Fortschrittsbalken), Größenlimit + Speicherkontingent pro User
-- [ ] Ordner (verschachtelt), Umbenennen, Verschieben, Papierkorb mit Wiederherstellen
-- [ ] Vorschau: Bilder, Video, Audio, PDF, Text; Thumbnails für Bilder (+ Video via ffmpeg, optional)
-- [ ] Sichtbarkeit: privat / Mitglieder / öffentlich; Freigabe-Links mit Ablaufdatum
-- [ ] Download mit HTTP-Range (Video-Streaming), sichere Auslieferung (CSP-Sandbox, nosniff)
-- [ ] Suche, Sortierung, Raster-/Listenansicht, Kontingentanzeige
-- [ ] Speicher-Backend hinter Trait (lokal; S3 später möglich), SHA-256-Prüfsummen
-- [ ] Wiederverwendung durch Avatare, Chat-Anhänge, Galerie, Blog-Cover, CMS-Felder, Watch
+- [x] Upload (Mehrfach, Drag & Drop, Fortschrittsbalken), Größenlimit + Speicherkontingent pro User
+- [x] Ordner (verschachtelt), Umbenennen, Verschieben, Papierkorb mit Wiederherstellen
+- [x] Vorschau: Bilder, Video, Audio, PDF, Text; Thumbnails für Bilder (+ Video via ffmpeg, optional)
+- [x] Sichtbarkeit: privat / Mitglieder / öffentlich; Freigabe-Links mit Ablaufdatum
+- [x] Download mit HTTP-Range (Video-Streaming), sichere Auslieferung (CSP-Sandbox, nosniff)
+- [x] Suche, Sortierung, Raster-/Listenansicht, Kontingentanzeige
+- [x] Speicher-Backend hinter Trait (lokal; S3 später möglich), SHA-256-Prüfsummen
+- [x] Wiederverwendung durch Avatare, Chat-Anhänge, Galerie, Blog-Cover, CMS-Felder, Watch
 
 ## Phase 4 – Chat
 - [ ] Öffentliche + private Kanäle, Direktnachrichten, Gruppen-DMs

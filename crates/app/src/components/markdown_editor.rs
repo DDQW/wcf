@@ -166,6 +166,7 @@ pub fn MarkdownEditor(
                     {tool("link", "Link", Fmt::Link)}
                     {tool("list", "Liste", Fmt::Line("- "))}
                     {tool("list-ordered", "Nummerierte Liste", Fmt::Line("1. "))}
+                    <ImageUploadTool node=node value=value/>
                     {toolbar_extra.as_ref().map(|t| t())}
                 </div>
             </div>
@@ -298,4 +299,72 @@ fn current_mention(el: &web_sys::HtmlTextAreaElement) -> Option<(u32, String)> {
     }
     let at_utf16 = head[..at].encode_utf16().count() as u32;
     Some((at_utf16, query.to_string()))
+}
+
+/// Toolbar button that uploads images/files and inserts them as markdown.
+#[component]
+fn ImageUploadTool(node: NodeRef<html::Textarea>, value: RwSignal<String>) -> impl IntoView {
+    let session = crate::state::use_session();
+    let toasts = crate::state::use_toasts();
+    let busy = RwSignal::new(false);
+    let on_pick = move |ev: leptos::ev::Event| {
+        #[cfg(feature = "hydrate")]
+        {
+            let files = crate::upload::files_from_input(&ev);
+            if files.is_empty() {
+                return;
+            }
+            busy.set(true);
+            leptos::task::spawn_local(async move {
+                for file in files {
+                    let opts = crate::upload::UploadOpts {
+                        purpose: shared::files::FilePurpose::Embed,
+                        visibility: Some(shared::files::Visibility::Public),
+                        ..Default::default()
+                    };
+                    match crate::upload::upload_file(file, opts, |_| {}).await {
+                        Ok(res) => {
+                            for e in res.errors {
+                                toasts.error(e);
+                            }
+                            for f in res.files {
+                                let alt = f.name.replace(['[', ']'], "");
+                                let md = if f.kind() == shared::files::FileKind::Image {
+                                    format!("![{alt}](/files/{})\n", f.id)
+                                } else {
+                                    format!("[{alt}](/files/{})\n", f.id)
+                                };
+                                if let Some(el) = node.get() {
+                                    insert_at_caret(&el, &md);
+                                    value.set(el.value());
+                                } else {
+                                    value.update(|v| v.push_str(&md));
+                                }
+                            }
+                        }
+                        Err(e) => toasts.error(e),
+                    }
+                }
+                busy.set(false);
+            });
+        }
+        #[cfg(not(feature = "hydrate"))]
+        let _ = (ev, node, value, toasts);
+    };
+    view! {
+        <Show when=move || session.logged_in()>
+            <label class="tool-btn" title="Bild oder Datei hochladen" class:busy=move || busy.get()>
+                <Icon name="image" size=16/>
+                <input type="file" accept="image/*,video/*,application/pdf" multiple class="hidden" on:change=on_pick/>
+            </label>
+        </Show>
+    }
+}
+
+#[cfg(feature = "hydrate")]
+fn insert_at_caret(el: &web_sys::HtmlTextAreaElement, text: &str) {
+    let len = js_sys::JsString::from(el.value()).length();
+    let start = el.selection_start().ok().flatten().unwrap_or(len).min(len);
+    let end = el.selection_end().ok().flatten().unwrap_or(start).min(len).max(start);
+    splice(el, start, end, text);
 }

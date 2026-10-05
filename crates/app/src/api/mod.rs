@@ -3,6 +3,7 @@
 
 pub mod admin;
 pub mod auth;
+pub mod files;
 pub mod forum;
 pub mod moderation;
 pub mod notifications;

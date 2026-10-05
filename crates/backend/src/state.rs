@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::{Arc, RwLock};
 
 use shared::{PublicSiteInfo, SiteSettings};
@@ -8,6 +9,7 @@ use crate::error::Result;
 use crate::hub::Hub;
 use crate::mail::Mailer;
 use crate::ratelimit::RateLimiter;
+use crate::storage::Storage;
 use crate::{markdown, settings};
 
 struct SiteCache {
@@ -23,6 +25,9 @@ pub struct AppState {
     pub hub: Hub,
     pub limiter: RateLimiter,
     pub mailer: Option<Mailer>,
+    pub storage: Storage,
+    /// ffmpeg binary, if available (video thumbnails, media library).
+    pub ffmpeg: Option<PathBuf>,
     site: Arc<RwLock<SiteCache>>,
 }
 
@@ -38,6 +43,12 @@ impl AppState {
             },
             None => None,
         };
+        let storage = Storage::new(&config.data_dir)?;
+        let ffmpeg = crate::media::detect_ffmpeg(config.ffmpeg.clone()).await;
+        match &ffmpeg {
+            Some(p) => tracing::info!(path = %p.display(), "ffmpeg gefunden"),
+            None => tracing::info!("ffmpeg nicht gefunden – keine Video-Thumbnails"),
+        }
         let loaded = settings::load(&db).await?;
         let welcome_html = markdown::render(&loaded.welcome_md);
         Ok(Self {
@@ -46,6 +57,8 @@ impl AppState {
             hub: Hub::new(),
             limiter: RateLimiter::new(),
             mailer,
+            storage,
+            ffmpeg,
             site: Arc::new(RwLock::new(SiteCache {
                 settings: loaded,
                 welcome_html,

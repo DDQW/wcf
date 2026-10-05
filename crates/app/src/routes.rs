@@ -5,6 +5,7 @@ use leptos_router::path;
 use crate::pages::admin::{
     AdminDashboard, AdminForum, AdminLayout, AdminLog, AdminReports, AdminSettings, AdminUsers,
 };
+use crate::pages::files::{FilesPage, SharePage};
 use crate::pages::auth::{ForgotPasswordPage, LoginPage, RegisterPage, ResetPasswordPage};
 use crate::pages::forum::{CategoryPage, ForumIndex, NewTopicPage, TagPage, TopicPage};
 use crate::pages::home::HomePage;
@@ -30,6 +31,9 @@ pub fn AppRoutes() -> impl IntoView {
             <Route path=path!("/notifications") view=NotificationsPage/>
             <Route path=path!("/search") view=SearchPage/>
 
+            <Route path=path!("/files") view=FilesPage/>
+            <Route path=path!("/s/:token") view=SharePage/>
+
             <Route path=path!("/forum") view=ForumIndex/>
             <Route path=path!("/forum/new") view=NewTopicPage/>
             <Route path=path!("/forum/c/:id") view=CategoryPage/>
@@ -49,7 +53,16 @@ pub fn AppRoutes() -> impl IntoView {
 }
 
 /// Sidebar entries of optional modules (added phase by phase).
-pub fn module_nav() -> impl IntoView {}
+pub fn module_nav() -> impl IntoView {
+    use crate::components::layout::NavItem;
+    let session = crate::state::use_session();
+    let m = move || session.site.with(|s| s.modules.clone());
+    view! {
+        <Show when=move || m().files && session.logged_in()>
+            <NavItem href="/files" icon="hard-drive" label="Dateien"/>
+        </Show>
+    }
+}
 
 /// Extra entries in the user menu (e.g. "Mein Blog").
 pub fn user_menu_items() -> impl IntoView {}

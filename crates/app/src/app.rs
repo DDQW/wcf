@@ -102,7 +102,10 @@ pub fn App() -> impl IntoView {
         store_local_theme(t);
     });
 
-    let site_name = move || session.site.with(|s| s.site_name.clone());
+    // The title formatter runs after rendering, outside the reactive
+    // arena, so it must not read signals: keep a plain shared copy.
+    let site_name = std::sync::Arc::new(std::sync::RwLock::new(String::new()));
+    let site_name_fmt = site_name.clone();
 
     view! {
         <Stylesheet id="leptos" href="/pkg/woelkicommunityframework.css"/>
@@ -111,15 +114,20 @@ pub fn App() -> impl IntoView {
             t => Some(t.as_str()),
         }/>
         <Title formatter=move |text: String| {
-            let site = site_name();
+            let site = site_name_fmt.read().map(|s| s.clone()).unwrap_or_default();
             if text.is_empty() { site } else { format!("{text} · {site}") }
         }/>
         <Meta name="description" content=move || session.site.with(|s| s.site_description.clone())/>
         <Router>
             <Suspense fallback=|| view! { <div class="boot"><Spinner label="Lade …"/></div> }>
-                {move || Suspend::new(async move {
+                {move || {
+                let site_name = site_name.clone();
+                Suspend::new(async move {
                     match bootstrap.await {
                         Ok(b) => {
+                            if let Ok(mut name) = site_name.write() {
+                                *name = b.site.site_name.clone();
+                            }
                             session.apply(b);
                             view! { <Shell/> }.into_any()
                         }
@@ -129,7 +137,8 @@ pub fn App() -> impl IntoView {
                             </div>
                         }.into_any(),
                     }
-                })}
+                })
+                }}
             </Suspense>
         </Router>
     }

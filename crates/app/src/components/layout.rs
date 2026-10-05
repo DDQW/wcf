@@ -44,7 +44,7 @@ pub fn Shell() -> impl IntoView {
 }
 
 #[component]
-fn NavItem(
+pub fn NavItem(
     #[prop(into)] href: String,
     #[prop(into)] icon: String,
     #[prop(into)] label: String,

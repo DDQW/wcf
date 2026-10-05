@@ -6,7 +6,7 @@ use crate::components::icon::Icon;
 #[component]
 pub fn Modal(
     open: RwSignal<bool>,
-    #[prop(into)] title: String,
+    #[prop(into)] title: Signal<String>,
     children: ChildrenFn,
     #[prop(optional)] wide: bool,
 ) -> impl IntoView {
@@ -19,7 +19,6 @@ pub fn Modal(
         });
         on_cleanup(move || handle.remove());
     }
-    let title = StoredValue::new(title);
     let children = StoredValue::new(children);
     view! {
         <Show when=move || open.get()>
@@ -32,7 +31,7 @@ pub fn Modal(
                     on:click=|ev| ev.stop_propagation()
                 >
                     <header class="modal-header">
-                        <h2>{title.get_value()}</h2>
+                        <h2>{move || title.get()}</h2>
                         <button class="icon-btn" aria-label="Schließen" on:click=move |_| open.set(false)>
                             <Icon name="x"/>
                         </button>
@@ -48,7 +47,8 @@ pub fn Modal(
 #[component]
 pub fn Dropdown(
     /// Content of the trigger button.
-    trigger: ChildrenFn,
+    #[prop(into)]
+    trigger: ViewFn,
     children: ChildrenFn,
     #[prop(optional, into)] class: String,
     #[prop(optional)] align_right: bool,
@@ -64,7 +64,6 @@ pub fn Dropdown(
         });
         on_cleanup(move || handle.remove());
     }
-    let trigger = StoredValue::new(trigger);
     let children = StoredValue::new(children);
     view! {
         <div class=format!("dropdown {class}") on:click=|ev| ev.stop_propagation()>
@@ -74,7 +73,7 @@ pub fn Dropdown(
                 aria-expanded=move || open.get().to_string()
                 on:click=move |_| open.update(|o| *o = !*o)
             >
-                {trigger.with_value(|t| t())}
+                {trigger.run()}
             </button>
             <Show when=move || open.get()>
                 <div class="dropdown-menu" class:align-right=align_right on:click=move |_| open.set(false)>

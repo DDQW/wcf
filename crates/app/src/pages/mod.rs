@@ -1,6 +1,7 @@
 pub mod admin;
 pub mod admin_ext;
 pub mod auth;
+pub mod files;
 pub mod forum;
 pub mod home;
 pub mod home_extra;

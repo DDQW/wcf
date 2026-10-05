@@ -8,6 +8,7 @@ pub mod pages;
 pub mod realtime;
 pub mod routes;
 pub mod state;
+pub mod upload;
 
 #[cfg(feature = "ssr")]
 pub mod ssr;
