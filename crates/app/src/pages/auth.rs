@@ -78,9 +78,12 @@ pub fn RegisterPage() -> impl IntoView {
     let email = RwSignal::new(String::new());
     let password = RwSignal::new(String::new());
     let password2 = RwSignal::new(String::new());
+    let query = use_query_map();
+    let invite = RwSignal::new(query.with_untracked(|q| q.get("invite").unwrap_or_default()));
     let error = RwSignal::new(None::<String>);
     let busy = RwSignal::new(false);
     let open = move || session.site.with(|s| s.registration_open);
+    let invite_only = move || session.site.with(|s| s.invite_only);
 
     let submit = move |ev: leptos::ev::SubmitEvent| {
         ev.prevent_default();
@@ -101,6 +104,7 @@ pub fn RegisterPage() -> impl IntoView {
                 email.get_untracked(),
                 password.get_untracked(),
                 display_name.get_untracked(),
+                invite.get_untracked(),
             )
             .await
             {
@@ -122,6 +126,13 @@ pub fn RegisterPage() -> impl IntoView {
                 <div class="alert"><Icon name="lock"/>"Die Registrierung ist derzeit geschlossen."</div>
             }>
                 <form class="stack" on:submit=submit.clone()>
+                    <Show when=invite_only>
+                        <label class="field">
+                            <span>"Einladungscode"</span>
+                            <input type="text" required autocomplete="off" placeholder="XXXXX-XXXXX" bind:value=invite/>
+                            <small class="muted">"Die Registrierung ist nur mit Einladung möglich."</small>
+                        </label>
+                    </Show>
                     <label class="field">
                         <span>"Benutzername"</span>
                         <input type="text" autocomplete="username" required minlength="3" maxlength="32" bind:value=username/>

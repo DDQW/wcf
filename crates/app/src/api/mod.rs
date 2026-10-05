@@ -9,6 +9,7 @@ pub mod chat;
 pub mod cms;
 pub mod files;
 pub mod forum;
+pub mod invites;
 pub mod gallery;
 pub mod moderation;
 pub mod notifications;

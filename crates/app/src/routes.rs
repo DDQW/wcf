@@ -87,6 +87,7 @@ pub fn AppRoutes() -> impl IntoView {
                 <Route path=path!("forum") view=AdminForum/>
                 <Route path=path!("settings") view=AdminSettings/>
                 <Route path=path!("log") view=AdminLog/>
+                <Route path=path!("invites") view=crate::pages::invites::AdminInvites/>
                 <Route path=path!("cms") view=AdminCms/>
                 <Route path=path!("cms/type/new") view=AdminCmsType/>
                 <Route path=path!("cms/type/:id") view=AdminCmsType/>

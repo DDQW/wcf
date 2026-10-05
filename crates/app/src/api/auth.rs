@@ -45,6 +45,7 @@ pub async fn register(
     email: String,
     password: String,
     display_name: String,
+    invite_code: String,
 ) -> Result<Bootstrap, AppError> {
     let st = crate::ssr::state()?;
     let ip = crate::ssr::client_ip().await;
@@ -56,6 +57,7 @@ pub async fn register(
             email,
             password,
             display_name,
+            invite_code,
         },
     )
     .await?;

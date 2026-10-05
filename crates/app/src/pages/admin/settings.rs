@@ -82,6 +82,8 @@ fn SettingsForm(s: SiteSettings) -> impl IntoView {
                     <MarkdownEditor value=welcome rows=5/>
                 </div>
                 {check("Registrierung offen", |s| s.registration_open, |s, v| s.registration_open = v)}
+                {check("Registrierung nur mit Einladungscode", |s| s.invite_only, |s, v| s.invite_only = v)}
+                {check("Mitglieder dürfen Einladungen erstellen", |s| s.members_can_invite, |s, v| s.members_can_invite = v)}
             </section>
             <section class="card stack">
                 <h2>"Module"</h2>

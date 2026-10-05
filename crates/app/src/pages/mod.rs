@@ -11,6 +11,7 @@ pub mod forum;
 pub mod gallery;
 pub mod home;
 pub mod home_extra;
+pub mod invites;
 pub mod members;
 pub mod not_found;
 pub mod notifications;

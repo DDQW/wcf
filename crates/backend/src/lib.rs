@@ -17,6 +17,7 @@ pub mod files_http;
 pub mod forum;
 pub mod gallery;
 pub mod http;
+pub mod invites;
 pub mod hub;
 pub mod jobs;
 pub mod livekit;

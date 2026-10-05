@@ -93,6 +93,7 @@ fn ProfileTab(s: SettingsView) -> impl IntoView {
     view! {
         <div class="settings-grid">
             {crate::pages::settings_ext::avatar_section(s.avatar_url.clone())}
+            <crate::pages::invites::InviteSection/>
             <form class="card stack" on:submit=save>
                 <h2>"Profil"</h2>
                 <label class="field">

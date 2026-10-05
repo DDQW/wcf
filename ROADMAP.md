@@ -20,7 +20,7 @@ Legende: `[x]` fertig · `[ ]` offen
 - [x] Profile: Avatar, Bio, Ort, Website, Mitglied seit, zuletzt online, Statistiken
 - [x] Einstellungen: Anzeigename, E-Mail, Passwort ändern, Theme, Benachrichtigungs-Optionen
 - [x] Passwort-Reset (E-Mail per SMTP, falls konfiguriert – sonst Reset-Link durch Admin)
-- [ ] Einladungscodes: Registrierung optional nur mit Code (aus HQTube übernommen)
+- [x] Einladungscodes: Registrierung optional nur mit Code (aus HQTube übernommen)
 - [x] Mitgliederliste mit Suche, Rollenfilter, Online-Status
 - [x] Benachrichtigungen (In-App, live per WebSocket): Antworten, Mentions, Reaktionen, Kommentare, Abos
 - [x] Reaktionen (Emoji) generisch für alle Inhalte

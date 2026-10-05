@@ -53,6 +53,10 @@ pub struct SiteSettings {
     pub members_create_watch_rooms: bool,
     /// Whether members may create persistent call rooms.
     pub members_create_call_rooms: bool,
+    /// Registration requires an invite code (the very first account is exempt).
+    pub invite_only: bool,
+    /// Whether members (not only moderators) may create invite codes.
+    pub members_can_invite: bool,
 }
 
 impl Default for SiteSettings {
@@ -70,6 +74,8 @@ impl Default for SiteSettings {
             members_create_channels: true,
             members_create_watch_rooms: true,
             members_create_call_rooms: true,
+            invite_only: false,
+            members_can_invite: false,
         }
     }
 }
@@ -88,6 +94,8 @@ pub struct PublicSiteInfo {
     pub members_create_channels: bool,
     pub members_create_watch_rooms: bool,
     pub members_create_call_rooms: bool,
+    pub invite_only: bool,
+    pub members_can_invite: bool,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -126,4 +134,37 @@ pub struct AdminUserPage {
     pub items: Vec<AdminUserRow>,
     pub total: i64,
     pub per_page: i64,
+}
+
+/// An invite code as shown to its creator / admins.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct InviteView {
+    pub code: String,
+    pub created_by: Option<crate::user::UserSummary>,
+    pub created_at: DateTime<Utc>,
+    pub expires_at: Option<DateTime<Utc>>,
+    pub max_uses: i32,
+    pub uses: i32,
+    pub note: String,
+    pub revoked: bool,
+    pub used_by: Vec<crate::user::UserSummary>,
+}
+
+impl InviteView {
+    pub fn usable(&self, now: DateTime<Utc>) -> bool {
+        !self.revoked && self.uses < self.max_uses && self.expires_at.is_none_or(|e| e > now)
+    }
+
+    pub fn link(&self, origin: &str) -> String {
+        format!("{origin}/register?invite={}", self.code)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct InviteInput {
+    pub count: i32,
+    pub max_uses: i32,
+    /// Days until expiry; `None` = never.
+    pub expires_days: Option<i64>,
+    pub note: String,
 }

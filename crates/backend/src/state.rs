@@ -95,6 +95,8 @@ impl AppState {
             members_create_channels: s.members_create_channels,
             members_create_watch_rooms: s.members_create_watch_rooms,
             members_create_call_rooms: s.members_create_call_rooms,
+            invite_only: s.invite_only,
+            members_can_invite: s.members_can_invite,
         }
     }
 }

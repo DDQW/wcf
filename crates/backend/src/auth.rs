@@ -53,6 +53,8 @@ pub struct RegisterInput {
     pub email: String,
     pub password: String,
     pub display_name: String,
+    /// Required when the site is invite-only.
+    pub invite_code: String,
 }
 
 pub async fn register(state: &AppState, ip: &str, input: RegisterInput) -> Result<AuthUser> {
@@ -100,6 +102,14 @@ pub async fn register(state: &AppState, ip: &str, input: RegisterInput) -> Resul
     let password_hash = hash_password(&input.password).await?;
     let role = if is_first { Role::Admin } else { Role::Member };
     let id = Uuid::now_v7();
+    // The code is claimed in the same transaction: a failed sign-up never burns it.
+    let needs_invite = !is_first && state.settings().invite_only;
+    let mut tx = state.db.begin().await?;
+    let inviter = if needs_invite {
+        crate::invites::claim(&mut tx, &input.invite_code).await?
+    } else {
+        None
+    };
     let res = sqlx::query(
         "INSERT INTO users (id, username, email, password_hash, display_name, role) \
          VALUES ($1, $2, $3, $4, $5, $6)",
@@ -110,7 +120,7 @@ pub async fn register(state: &AppState, ip: &str, input: RegisterInput) -> Resul
     .bind(&password_hash)
     .bind(&display_name)
     .bind(role.as_str())
-    .execute(&state.db)
+    .execute(&mut *tx)
     .await;
     if let Err(e) = res {
         let e = Error::from(e);
@@ -119,9 +129,17 @@ pub async fn register(state: &AppState, ip: &str, input: RegisterInput) -> Resul
         }
         return Err(e);
     }
-    users::find_auth_user(&state.db, id)
+    if needs_invite {
+        crate::invites::record_use(&mut tx, &input.invite_code, id).await?;
+    }
+    tx.commit().await?;
+    let user = users::find_auth_user(&state.db, id)
         .await?
-        .ok_or_else(|| Error::internal("user vanished after insert"))
+        .ok_or_else(|| Error::internal("user vanished after insert"))?;
+    if let Some(inviter) = inviter {
+        crate::invites::notify_inviter(state, inviter, &user).await;
+    }
+    Ok(user)
 }
 
 pub async fn login(state: &AppState, ip: &str, username_or_email: &str, password: &str) -> Result<AuthUser> {

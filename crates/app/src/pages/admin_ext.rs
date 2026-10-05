@@ -14,6 +14,7 @@ pub fn admin_nav() -> impl IntoView {
         view! { <a class="subnav-item" class:active=active href=href><Icon name=icon size=16/>{label}</a> }
     };
     view! {
+        {link("/admin/invites", "user-plus", "Einladungen")}
         <Show when=move || session.is_admin() && session.site.with(|s| s.modules.cms)>
             {link("/admin/cms", "layout", "Inhaltstypen")}
             {link("/admin/menu", "menu", "Menü")}
