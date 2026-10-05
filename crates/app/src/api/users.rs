@@ -23,7 +23,7 @@ pub async fn user_activity(user_id: Uuid) -> Result<Vec<ActivityItem>, AppError>
     let viewer = crate::ssr::viewer().await?;
     let mut items = backend::forum::user_activity(&st.db, viewer.as_ref(), user_id, 30).await?;
     crate::api::extend_activity(&st, viewer.as_ref(), user_id, &mut items).await;
-    items.sort_by(|a, b| b.created_at.cmp(&a.created_at));
+    items.sort_by_key(|a| std::cmp::Reverse(a.created_at));
     items.truncate(30);
     Ok(items)
 }
@@ -65,7 +65,7 @@ pub async fn online_users() -> Result<Vec<UserSummary>, AppError> {
         .await?
         .into_values()
         .collect();
-    list.sort_by(|a, b| a.display_name.to_lowercase().cmp(&b.display_name.to_lowercase()));
+    list.sort_by_key(|a| a.display_name.to_lowercase());
     Ok(list)
 }
 
@@ -146,7 +146,7 @@ pub async fn fetch_home_data() -> Result<HomeData, AppError> {
         .await?
         .into_values()
         .collect();
-    online.sort_by(|a, b| a.display_name.to_lowercase().cmp(&b.display_name.to_lowercase()));
+    online.sort_by_key(|a| a.display_name.to_lowercase());
     let newest_members = backend::users::newest(&st.db, 6).await?;
     let mut data = HomeData {
         latest_topics,

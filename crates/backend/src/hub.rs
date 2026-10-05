@@ -230,7 +230,7 @@ impl Hub {
                 }
             }
         }
-        out.sort_by(|a, b| a.display_name.to_lowercase().cmp(&b.display_name.to_lowercase()));
+        out.sort_by_key(|a| a.display_name.to_lowercase());
         out
     }
 

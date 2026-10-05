@@ -1,0 +1,24 @@
+# LiveKit media server for wcf calls (https://docs.livekit.io/home/self-hosting/).
+#   livekit-server --config deploy/livekit.yaml
+# Generate a key pair once, e.g.  openssl rand -hex 6 / openssl rand -hex 24,
+# put it below AND into wcf's .env:
+#   LIVEKIT_URL=wss://livekit.community.example.org
+#   LIVEKIT_API_KEY=<key>
+#   LIVEKIT_API_SECRET=<secret>
+# Firewall: open 7881/tcp and 50000-60000/udp; 7880 only via the reverse proxy.
+port: 7880
+bind_addresses:
+  - 127.0.0.1
+rtc:
+  tcp_port: 7881
+  port_range_start: 50000
+  port_range_end: 60000
+  use_external_ip: true
+keys:
+  CHANGE_ME_KEY: CHANGE_ME_SECRET_AT_LEAST_32_CHARACTERS
+room:
+  # Moderators may unmute nobody but themselves; muting others is allowed.
+  enable_remote_unmute: false
+  empty_timeout: 300
+logging:
+  level: info

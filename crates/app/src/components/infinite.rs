@@ -25,8 +25,8 @@ pub fn InfiniteSentinel(
         use wasm_bindgen::JsCast;
 
         let visible = Rc::new(RefCell::new(false));
-        let observer: StoredValue<Option<(web_sys::IntersectionObserver, Closure<dyn FnMut(js_sys::Array)>)>, LocalStorage> =
-            StoredValue::new_local(None);
+        type Observer = (web_sys::IntersectionObserver, Closure<dyn FnMut(js_sys::Array)>);
+        let observer: StoredValue<Option<Observer>, LocalStorage> = StoredValue::new_local(None);
 
         let fire = move || {
             if enabled.get_untracked() && !loading.get_untracked() {

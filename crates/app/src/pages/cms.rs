@@ -615,7 +615,7 @@ fn FieldInput(f: FieldDef, data: RwSignal<Map<String, Value>>, md: Option<RwSign
             let k = key.clone();
             view! {
                 <div class="check-grid">
-                    {f.options.iter().cloned().map(|o| {
+                    {f.options.iter().map(|o| {
                         let k = k.clone();
                         let k2 = k.clone();
                         let o2 = o.clone();

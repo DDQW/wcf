@@ -1,3 +1,5 @@
+#![recursion_limit = "512"]
+
 use std::net::SocketAddr;
 
 use app::app::{shell, RouteDefs};
@@ -109,6 +111,7 @@ async fn main() {
         router = router.layer(layer);
     }
     let app = router
+        .layer(axum::middleware::from_fn(backend::http::static_cache_headers))
         .layer(axum::extract::DefaultBodyLimit::max(16 * 1024 * 1024))
         .layer(session_layer)
         .with_state(state);

@@ -13,10 +13,10 @@ pub fn spawn(state: AppState) {
             tick.tick().await;
             minutes += 1;
             crate::jobs_ext::every_minute(&state).await;
-            if minutes % 10 == 0 {
+            if minutes.is_multiple_of(10) {
                 state.limiter.cleanup(Duration::from_secs(3600));
             }
-            if minutes % 60 == 0 {
+            if minutes.is_multiple_of(60) {
                 if let Err(e) = auth::purge_expired_resets(&state.db).await {
                     tracing::warn!(error = %e, "purge resets failed");
                 }

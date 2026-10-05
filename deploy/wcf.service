@@ -1,0 +1,30 @@
+# systemd unit for wcf. scripts/setup.sh fills in @DIR@ and @USER@:
+#   sudo cp deploy/wcf.service /etc/systemd/system/wcf.service   (after editing)
+#   sudo systemctl daemon-reload && sudo systemctl enable --now wcf
+[Unit]
+Description=Woelki Community Framework (wcf)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@USER@
+Group=@USER@
+WorkingDirectory=@DIR@
+ExecStart=@DIR@/wcf
+Restart=on-failure
+RestartSec=5
+# Graceful shutdown lets running uploads and media jobs finish.
+TimeoutStopSec=30
+LimitNOFILE=65536
+
+# Hardening: the service may only write its own folder (data/, .env).
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+# read-only so a WATCH_IMPORT_DIR below /home stays readable
+ProtectHome=read-only
+ReadWritePaths=@DIR@
+
+[Install]
+WantedBy=multi-user.target

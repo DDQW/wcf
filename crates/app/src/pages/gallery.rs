@@ -509,11 +509,10 @@ fn AlbumBody(album: AlbumView, images: Vec<ImageView>, reload: Callback<()>) -> 
     let on_drop = move |ev: leptos::ev::DragEvent| {
         ev.prevent_default();
         dragging.set(false);
-        if !can_upload {
-            return;
+        if can_upload {
+            #[cfg(feature = "hydrate")]
+            start_upload(crate::upload::files_from_drop(&ev));
         }
-        #[cfg(feature = "hydrate")]
-        start_upload(crate::upload::files_from_drop(&ev));
     };
     #[cfg(not(feature = "hydrate"))]
     let _ = start_upload;

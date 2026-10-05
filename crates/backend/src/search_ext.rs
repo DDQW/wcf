@@ -65,7 +65,7 @@ pub fn kind_query<'a>(
             Some(qb)
         }
         SearchKind::ChatMessage => {
-            let Some(v) = viewer else { return None };
+            let v = viewer?;
             qb.push(
                 "FROM chat_messages m JOIN chat_channels c ON c.id = m.channel_id \
                  JOIN users a ON a.id = m.author_id, websearch_to_tsquery('german', ",

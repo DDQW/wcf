@@ -106,11 +106,11 @@ fn Drive() -> impl IntoView {
     let on_drop = move |ev: leptos::ev::DragEvent| {
         ev.prevent_default();
         dragging.set(false);
-        if trash.get_untracked() {
-            return;
+        // No uploads into the trash.
+        if !trash.get_untracked() {
+            #[cfg(feature = "hydrate")]
+            start_upload(crate::upload::files_from_drop(&ev));
         }
-        #[cfg(feature = "hydrate")]
-        start_upload(crate::upload::files_from_drop(&ev));
     };
     #[cfg(not(feature = "hydrate"))]
     let _ = start_upload;

@@ -259,7 +259,7 @@ async fn neighbour(db: &PgPool, blog_id: Uuid, published_at: DateTime<Utc>, id: 
     .bind(id)
     .fetch_optional(db)
     .await?;
-    Ok(row
+    row
         .map(|r| -> Result<PostNeighbour> {
             let username: String = r.try_get("username")?;
             let slug: String = r.try_get("slug")?;
@@ -268,7 +268,7 @@ async fn neighbour(db: &PgPool, blog_id: Uuid, published_at: DateTime<Utc>, id: 
                 url: format!("/blog/{username}/{slug}"),
             })
         })
-        .transpose()?)
+        .transpose()
 }
 
 pub async fn get_post(state: &AppState, viewer: Option<&AuthUser>, username: &str, slug: &str) -> Result<BlogPostDetail> {

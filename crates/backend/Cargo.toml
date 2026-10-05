@@ -1,6 +1,6 @@
 [package]
 name = "backend"
-version = "0.1.0"
+version.workspace = true
 edition.workspace = true
 
 # Native-only server logic: database access, services, realtime hub,
@@ -39,3 +39,6 @@ kamadak-exif.workspace = true
 infer.workspace = true
 mime_guess.workspace = true
 tokio-util.workspace = true
+
+[dev-dependencies]
+dotenvy.workspace = true

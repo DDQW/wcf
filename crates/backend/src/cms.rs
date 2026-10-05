@@ -1085,7 +1085,8 @@ pub async fn save_menu(state: &AppState, actor: &AuthUser, items: Vec<MenuItem>)
 // ---------------------------------------------------------------------------
 
 pub async fn subject_info(state: &AppState, viewer: Option<&AuthUser>, id: Uuid) -> Result<Option<crate::subjects::SubjectInfo>> {
-    let row: Option<(String, String, String, Option<DateTime<Utc>>, Option<Uuid>, String, bool)> = sqlx::query_as(
+    type Row = (String, String, String, Option<DateTime<Utc>>, Option<Uuid>, String, bool);
+    let row: Option<Row> = sqlx::query_as(
         "SELECT e.title, e.slug, e.status, e.published_at, e.author_id, t.slug, t.is_page_type \
          FROM cms_entries e JOIN cms_types t ON t.id = e.type_id WHERE e.id = $1",
     )

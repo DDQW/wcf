@@ -1,0 +1,13 @@
+# Caddy in front of wcf: TLS certificates and WebSockets work automatically.
+#   sudo cp deploy/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy
+community.example.org {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000 {
+		flush_interval -1
+	}
+}
+
+# Optional: LiveKit for calls (see deploy/livekit.yaml)
+# livekit.community.example.org {
+# 	reverse_proxy 127.0.0.1:7880
+# }

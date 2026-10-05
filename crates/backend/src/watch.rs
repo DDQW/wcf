@@ -566,7 +566,7 @@ pub async fn restricted(state: &AppState, user: &AuthUser, room_id: Uuid) -> Res
             });
         }
     }
-    out.sort_by(|a, b| a.user.display_name.to_lowercase().cmp(&b.user.display_name.to_lowercase()));
+    out.sort_by_key(|a| a.user.display_name.to_lowercase());
     Ok(out)
 }
 

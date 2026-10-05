@@ -1,5 +1,5 @@
 use leptos::prelude::*;
-use leptos_meta::{provide_meta_context, Html, Meta, MetaTags, Stylesheet, Title};
+use leptos_meta::{provide_meta_context, HashedStylesheet, Html, Meta, MetaTags, Title};
 use leptos_router::components::Router;
 use shared::Theme;
 
@@ -20,8 +20,10 @@ pub fn shell(options: LeptosOptions) -> impl IntoView {
                 <script>
                     "try{var t=localStorage.getItem('theme');if(t&&t!=='system')document.documentElement.dataset.theme=t;}catch(e){}"
                 </script>
-                <script src="/js/wcf-call.js" defer></script>
-                <script src="/js/wcf-watch.js" defer></script>
+                <script src=concat!("/js/wcf-call.js?v=", env!("WCF_BUILD_ID")) defer></script>
+                <script src=concat!("/js/wcf-watch.js?v=", env!("WCF_BUILD_ID")) defer></script>
+                // Content-hashed file name when LEPTOS_HASH_FILES is on.
+                <HashedStylesheet options=options.clone() id="leptos"/>
                 <AutoReload options=options.clone()/>
                 <HydrationScripts options/>
                 <MetaTags/>
@@ -110,7 +112,6 @@ pub fn App() -> impl IntoView {
     let site_name_fmt = site_name.clone();
 
     view! {
-        <Stylesheet id="leptos" href="/pkg/woelkicommunityframework.css"/>
         <Html {..} data-theme=move || match theme.get() {
             Theme::System => None,
             t => Some(t.as_str()),

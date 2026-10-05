@@ -16,4 +16,22 @@ pub async fn hourly(state: &AppState) {
         tracing::warn!(error = %e, "trash purge failed");
     }
     state.storage.clean_tmp().await;
+    // Share links that ran out a while ago (kept briefly so owners see why).
+    if let Err(e) = sqlx::query(
+        "DELETE FROM file_shares WHERE (expires_at < now() - interval '30 days')          OR (max_downloads IS NOT NULL AND download_count >= max_downloads AND created_at < now() - interval '30 days')",
+    )
+    .execute(&state.db)
+    .await
+    {
+        tracing::warn!(error = %e, "share cleanup failed");
+    }
+    // Finished media jobs are only interesting for a while.
+    if let Err(e) = sqlx::query(
+        "DELETE FROM watch_jobs WHERE status IN ('done', 'error') AND updated_at < now() - interval '30 days'",
+    )
+    .execute(&state.db)
+    .await
+    {
+        tracing::warn!(error = %e, "media job cleanup failed");
+    }
 }

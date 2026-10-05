@@ -778,6 +778,9 @@ pub enum WatchClientMsg {
     },
 }
 
+/// Wire type: built and serialised right away, so the size of `Welcome`
+/// does not matter.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "t", rename_all = "snake_case")]
 pub enum WatchEvent {

@@ -1164,12 +1164,11 @@ pub fn IncomingCallHost() -> impl IntoView {
             incoming.set(Some(call));
             js::fire("ring", vec![true.into()]);
         }
-        Some(CallEvent::Status { call }) => {
-            if incoming.with_untracked(|c| c.as_ref().is_some_and(|c| c.id == call.id)) && call.status != CallStatus::Ringing {
+        Some(CallEvent::Status { call })
+            if incoming.with_untracked(|c| c.as_ref().is_some_and(|c| c.id == call.id)) && call.status != CallStatus::Ringing => {
                 incoming.set(None);
                 js::fire("ring", vec![false.into()]);
             }
-        }
         _ => {}
     });
     // Calls that started ringing before this page was loaded.

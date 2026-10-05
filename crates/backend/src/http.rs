@@ -65,3 +65,38 @@ pub fn same_origin(headers: &HeaderMap) -> bool {
         .trim_end_matches('/');
     origin_host.eq_ignore_ascii_case(host)
 }
+
+/// Cache policy for static files: content-hashed `/pkg` assets are immutable
+/// (when `LEPTOS_HASH_FILES` is on), versioned scripts and vendor libraries
+/// are immutable per version query, the rest revalidates. Everything else
+/// keeps its own headers.
+pub async fn static_cache_headers(
+    req: axum::extract::Request,
+    next: axum::middleware::Next,
+) -> axum::response::Response {
+    let path = req.uri().path().to_string();
+    let versioned = req.uri().query().is_some_and(|q| q.starts_with("v="));
+    let mut res = next.run(req).await;
+    if !res.status().is_success() || res.headers().contains_key(header::CACHE_CONTROL) {
+        return res;
+    }
+    let hashed = std::env::var("LEPTOS_HASH_FILES").is_ok_and(|v| v == "true");
+    let pkg = path.starts_with("/pkg/");
+    let script = path.starts_with("/js/") || path.starts_with("/vendor/");
+    let value = if (pkg && hashed) || (script && versioned) {
+        Some("public, max-age=31536000, immutable")
+    } else if pkg || script {
+        Some("no-cache")
+    } else if path == "/favicon.svg" {
+        Some("public, max-age=86400")
+    } else {
+        None
+    };
+    if let Some(v) = value {
+        let headers = res.headers_mut();
+        headers.insert(header::CACHE_CONTROL, HeaderValue::from_static(v));
+        // Release builds ship .br/.gz copies; shared caches must key on the encoding.
+        headers.insert(header::VARY, HeaderValue::from_static("accept-encoding"));
+    }
+    res
+}

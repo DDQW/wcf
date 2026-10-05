@@ -1168,7 +1168,8 @@ pub async fn serve_source(
 
 /// Stage description of a ready library item.
 pub async fn playing_media(db: &PgPool, id: Uuid) -> Result<Option<shared::watch::PlayingMedia>> {
-    let row: Option<(String, String, Option<i64>, String, Option<String>)> = sqlx::query_as(
+    type Row = (String, String, Option<i64>, String, Option<String>);
+    let row: Option<Row> = sqlx::query_as(
         "SELECT title, source_type, duration_ms, status, poster_path FROM watch_media WHERE id = $1",
     )
     .bind(id)

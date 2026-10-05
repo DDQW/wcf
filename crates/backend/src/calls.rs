@@ -145,7 +145,7 @@ pub async fn list_rooms(state: &AppState, user: &AuthUser) -> Result<Vec<CallRoo
         out.push(room_from(state, r, user).await?.view);
     }
     // Active rooms first.
-    out.sort_by(|a, b| b.participants.len().cmp(&a.participants.len()));
+    out.sort_by_key(|r| std::cmp::Reverse(r.participants.len()));
     Ok(out)
 }
 

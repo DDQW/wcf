@@ -7,7 +7,7 @@
 (function () {
   "use strict";
 
-  const LIB_URL = "/vendor/livekit-client.umd.js";
+  const LIB_URL = "/vendor/livekit-client.umd.js?v=2.22.3";
   let libPromise = null;
   let room = null;
   let container = null;

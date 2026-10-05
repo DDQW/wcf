@@ -111,9 +111,9 @@ ein Paket, ein Binary, eine Datenbank.
 - [x] Popout-Player und -Chat, Audio-Election (nur ein Fenster mit Ton), Join-Overlay (Autoplay)
 
 ## Phase 10 – Betrieb
-- [ ] README: Entwicklung (Windows) + Produktion (Linux, systemd, Reverse-Proxy mit WebSocket)
-- [ ] LiveKit-Konfiguration, Backups (pg_dump + Datenverzeichnis)
-- [ ] Hintergrundjobs: geplante Beiträge, Papierkorb leeren, abgelaufene Freigaben, Sessions
-- [ ] Tests (Unit + Integrationstests für Kernlogik), clippy sauber
-- [ ] Cache-Busting für CSS/JS/WASM im Release-Build (`hash-files`), lange Cache-Header für `/pkg`
-- [ ] Release-Paket + Setup-Skript (wie bei HQTube), Push nach github.com/DDQW/wcf (`master`)
+- [x] README: Entwicklung (Windows) + Produktion (Linux, systemd, Reverse-Proxy mit WebSocket)
+- [x] LiveKit-Konfiguration, Backups (pg_dump + Datenverzeichnis)
+- [x] Hintergrundjobs: geplante Beiträge, Papierkorb leeren, abgelaufene Freigaben, Sessions
+- [x] Tests (Unit + Integrationstests für Kernlogik), clippy sauber
+- [x] Cache-Busting für CSS/JS/WASM im Release-Build (Datei-Hashes), lange Cache-Header, Brotli/Gzip vorkomprimiert
+- [x] Release-Paket (`scripts/make-release.sh`, GitHub Actions bei Tags `v*`) + Setup-Skript (`scripts/setup.sh`), Push nach github.com/DDQW/wcf (`master`)

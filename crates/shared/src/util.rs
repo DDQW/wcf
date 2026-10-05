@@ -63,7 +63,7 @@ pub fn initials(display_name: &str) -> String {
         .split(|c: char| c.is_whitespace() || c == '-' || c == '_' || c == '.')
         .filter(|p| !p.is_empty());
     let first = parts.next().and_then(|p| p.chars().next());
-    let second = parts.last().and_then(|p| p.chars().next());
+    let second = parts.next_back().and_then(|p| p.chars().next());
     let mut out = String::new();
     if let Some(c) = first {
         out.extend(c.to_uppercase());

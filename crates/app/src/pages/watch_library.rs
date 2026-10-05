@@ -351,7 +351,7 @@ fn PackageForm(media: MediaInfo, done: Callback<()>) -> impl IntoView {
             <p><strong>{media.title.clone()}</strong></p>
             {video.map(|v| view! {
                 <p class="muted small">{format!("Video: {}{}", v.codec, match (v.width, v.height) { (Some(w), Some(h)) => format!(" · {w}×{h}"), _ => String::new() })}
-                    {(!matches!(v.codec.as_str(), "h264" | "av1" | "vp9")).then(|| " – wird nach H.264 umkodiert (dauert länger)")}
+                    {(!matches!(v.codec.as_str(), "h264" | "av1" | "vp9")).then_some(" – wird nach H.264 umkodiert (dauert länger)")}
                 </p>
             })}
             <h3>"Tonspuren"</h3>

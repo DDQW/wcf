@@ -1427,7 +1427,7 @@ async fn tick(state: &AppState, room: &mut LiveRoom) -> bool {
         }
     }
     // Periodic re-broadcast for drift correction.
-    if room.media.is_some() && room.tick_count % STATE_REBROADCAST_TICKS == 0 && viewers > 0 {
+    if room.media.is_some() && room.tick_count.is_multiple_of(STATE_REBROADCAST_TICKS) && viewers > 0 {
         broadcast_state(state, room);
     }
     // Empty rooms without a show are released.

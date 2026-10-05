@@ -8,7 +8,7 @@
 (function () {
   "use strict";
 
-  const HLS_URL = "/vendor/hls.min.js";
+  const HLS_URL = "/vendor/hls.min.js?v=1.7.3";
   const YT_API = "https://www.youtube.com/iframe_api";
   /** |error| below this: leave playback alone. */
   const DEADBAND_MS = 150;

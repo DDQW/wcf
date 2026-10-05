@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      # Integration tests create and drop their own databases here.
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Clippy (server)
+        run: cargo clippy -p shared -p backend -p server --all-targets -- -D warnings
+      - name: Clippy (app, SSR)
+        run: cargo clippy -p app --features ssr --all-targets -- -D warnings
+      - name: Clippy (app, browser)
+        run: cargo clippy -p app --features hydrate --target wasm32-unknown-unknown -- -D warnings
+      - name: Tests
+        run: |
+          cargo test -p shared -p backend
+          cargo test -p app --features ssr --lib

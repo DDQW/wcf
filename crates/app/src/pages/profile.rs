@@ -17,7 +17,7 @@ use crate::state::{use_session, use_toasts};
 pub fn ProfilePage() -> impl IntoView {
     let params = use_params_map();
     let username = move || params.read().get("username").unwrap_or_default();
-    let data = Resource::new(username, |name| profile(name));
+    let data = Resource::new(username, profile);
     let reload = move || data.refetch();
 
     view! {
