@@ -1,9 +1,11 @@
+mod cms;
 mod forum;
 mod log;
 mod reports;
 mod settings;
 mod users;
 
+pub use cms::{AdminCms, AdminCmsType, AdminMenu};
 pub use forum::AdminForum;
 pub use log::AdminLog;
 pub use reports::AdminReports;

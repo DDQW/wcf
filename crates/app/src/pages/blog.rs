@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 use crate::api::blog::*;
 use crate::components::comments::CommentsSection;
-use crate::components::common::{confirm, copy_to_clipboard, origin};
+use crate::components::common::{confirm, copy_to_clipboard, datetime_local_value as to_local_input, origin, parse_datetime_local as from_local_input};
 use crate::components::{
     Avatar, EmptyState, ErrorBox, Icon, InfiniteSentinel, MarkdownEditor, PageHeader, ReactionBar,
     ReportButton, RequireLogin, Spinner, TimeAgo,
@@ -450,44 +450,6 @@ fn MyBlog() -> impl IntoView {
                 </Suspense>
             </section>
         </div>
-    }
-}
-
-/// "2026-10-05T14:30" in local time for `<input type=datetime-local>`.
-fn to_local_input(ts: DateTime<Utc>) -> String {
-    #[cfg(feature = "hydrate")]
-    {
-        let d = js_sys::Date::new(&wasm_bindgen::JsValue::from_f64(ts.timestamp_millis() as f64));
-        format!(
-            "{}-{:02}-{:02}T{:02}:{:02}",
-            d.get_full_year(),
-            d.get_month() + 1,
-            d.get_date(),
-            d.get_hours(),
-            d.get_minutes()
-        )
-    }
-    #[cfg(not(feature = "hydrate"))]
-    {
-        ts.format("%Y-%m-%dT%H:%M").to_string()
-    }
-}
-
-fn from_local_input(s: &str) -> Option<DateTime<Utc>> {
-    if s.trim().is_empty() {
-        return None;
-    }
-    #[cfg(feature = "hydrate")]
-    {
-        let ms = js_sys::Date::new(&wasm_bindgen::JsValue::from_str(s)).get_time();
-        if ms.is_nan() {
-            return None;
-        }
-        DateTime::<Utc>::from_timestamp_millis(ms as i64)
-    }
-    #[cfg(not(feature = "hydrate"))]
-    {
-        chrono::NaiveDateTime::parse_from_str(s, "%Y-%m-%dT%H:%M").ok().map(|n| n.and_utc())
     }
 }
 

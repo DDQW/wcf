@@ -3,10 +3,12 @@ use leptos_router::components::{ParentRoute, Route, Routes};
 use leptos_router::path;
 
 use crate::pages::admin::{
-    AdminDashboard, AdminForum, AdminLayout, AdminLog, AdminReports, AdminSettings, AdminUsers,
+    AdminCms, AdminCmsType, AdminDashboard, AdminForum, AdminLayout, AdminLog, AdminMenu,
+    AdminReports, AdminSettings, AdminUsers,
 };
 use crate::pages::blog::{BlogEditorPage, BlogPage, BlogPostPage, BlogTagPage, BlogsIndex, MyBlogPage};
 use crate::pages::chat::ChatPage;
+use crate::pages::cms::{CmsEditorPage, CmsEntryPage, CmsIndex, CmsListPage, CmsStaticPage};
 use crate::pages::files::{FilesPage, SharePage};
 use crate::pages::auth::{ForgotPasswordPage, LoginPage, RegisterPage, ResetPasswordPage};
 use crate::pages::forum::{CategoryPage, ForumIndex, NewTopicPage, TagPage, TopicPage};
@@ -40,6 +42,12 @@ pub fn AppRoutes() -> impl IntoView {
             <Route path=path!("/me/blog") view=MyBlogPage/>
             <Route path=path!("/me/blog/new") view=BlogEditorPage/>
             <Route path=path!("/me/blog/edit/:id") view=BlogEditorPage/>
+            <Route path=path!("/c") view=CmsIndex/>
+            <Route path=path!("/c/:type") view=CmsListPage/>
+            <Route path=path!("/c/:type/:slug") view=CmsEntryPage/>
+            <Route path=path!("/p/:slug") view=CmsStaticPage/>
+            <Route path=path!("/cms/:type/new") view=CmsEditorPage/>
+            <Route path=path!("/cms/edit/:id") view=CmsEditorPage/>
             <Route path=path!("/chat") view=ChatPage/>
             <Route path=path!("/chat/:id") view=ChatPage/>
             <Route path=path!("/files") view=FilesPage/>
@@ -58,6 +66,10 @@ pub fn AppRoutes() -> impl IntoView {
                 <Route path=path!("forum") view=AdminForum/>
                 <Route path=path!("settings") view=AdminSettings/>
                 <Route path=path!("log") view=AdminLog/>
+                <Route path=path!("cms") view=AdminCms/>
+                <Route path=path!("cms/type/new") view=AdminCmsType/>
+                <Route path=path!("cms/type/:id") view=AdminCmsType/>
+                <Route path=path!("menu") view=AdminMenu/>
             </ParentRoute>
         </Routes>
     }
@@ -80,6 +92,9 @@ pub fn module_nav() -> impl IntoView {
         </Show>
         <Show when=move || m().files && session.logged_in()>
             <NavItem href="/files" icon="hard-drive" label="Dateien"/>
+        </Show>
+        <Show when=move || m().cms>
+            <NavItem href="/c" icon="layout" label="Inhalte" exact=true/>
         </Show>
     }
 }

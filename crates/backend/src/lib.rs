@@ -6,6 +6,7 @@ pub mod admin;
 pub mod auth;
 pub mod blogs;
 pub mod chat;
+pub mod cms;
 pub mod comments;
 pub mod config;
 pub mod error;
@@ -72,5 +73,7 @@ where
         .route("/files/{id}/thumb", get(files_http::serve_thumb))
         .route("/files/{id}/preview", get(files_http::serve_preview))
         .route("/blogs/feed.xml", get(blogs::rss_all_handler))
+        .route("/api/cms/{type_slug}", get(cms::api_list))
+        .route("/api/cms/{type_slug}/{slug}", get(cms::api_get))
         .route("/blog/{username}/feed.xml", get(blogs::rss_blog_handler))
 }

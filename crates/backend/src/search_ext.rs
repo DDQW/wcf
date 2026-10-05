@@ -26,6 +26,20 @@ pub fn kind_query<'a>(
             qb.push(")");
             Some(qb)
         }
+        SearchKind::CmsEntry => {
+            qb.push(
+                "FROM cms_entries e JOIN cms_types t ON t.id = e.type_id LEFT JOIN users a ON a.id = e.author_id, \
+                 websearch_to_tsquery('german', ",
+            );
+            qb.push_bind(query);
+            qb.push(") q WHERE e.search @@ q AND e.status = 'published' AND e.published_at <= now() \
+                     AND (t.read_access = 'public' OR (t.read_access = 'members' AND ");
+            qb.push_bind(viewer.is_some());
+            qb.push(") OR ");
+            qb.push_bind(viewer.is_some_and(|v| v.is_mod()));
+            qb.push(")");
+            Some(qb)
+        }
         SearchKind::BlogPost => {
             qb.push(
                 "FROM blog_posts p JOIN users a ON a.id = p.author_id, websearch_to_tsquery('german', ",
@@ -54,6 +68,11 @@ pub fn hit_select(kind: SearchKind, author: &str) -> String {
     match kind {
         SearchKind::File => format!(
             "f.id, f.name AS title, f.created_at, {author}, f.mime_type || ' · ' ||              pg_size_pretty(f.size_bytes) AS hl, '/files/' || f.id AS link,              CASE WHEN f.has_thumb THEN '/files/' || f.id || '/thumb' END AS thumb,              ts_rank(f.search, q) AS rank"
+        ),
+        SearchKind::CmsEntry => format!(
+            "e.id, e.title, e.published_at AS created_at, {author}, t.name AS hl, \
+             CASE WHEN t.is_page_type THEN '/p/' || e.slug ELSE '/c/' || t.slug || '/' || e.slug END AS link, \
+             NULL::text AS thumb, ts_rank(e.search, q) AS rank"
         ),
         SearchKind::BlogPost => format!(
             "p.id, p.title, p.published_at AS created_at, {author}, \

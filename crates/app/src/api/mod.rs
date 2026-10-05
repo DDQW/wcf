@@ -5,6 +5,7 @@ pub mod admin;
 pub mod auth;
 pub mod blog;
 pub mod chat;
+pub mod cms;
 pub mod files;
 pub mod forum;
 pub mod moderation;
@@ -21,8 +22,16 @@ mod hooks {
     use crate::error::AppError;
 
     /// Extra navigation links (CMS menu) for the shell.
-    pub async fn nav_links(_st: &AppState) -> Vec<NavLink> {
-        Vec::new()
+    pub async fn nav_links(st: &AppState) -> Vec<NavLink> {
+        if !st.settings().modules.cms {
+            return Vec::new();
+        }
+        backend::cms::menu(&st.db)
+            .await
+            .unwrap_or_default()
+            .into_iter()
+            .map(|m| NavLink { label: m.label, url: m.url })
+            .collect()
     }
 
     /// Lets later modules add profile statistics.

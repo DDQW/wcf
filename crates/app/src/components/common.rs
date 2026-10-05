@@ -315,3 +315,42 @@ pub async fn sleep_ms(ms: u32) {
     #[cfg(not(feature = "hydrate"))]
     let _ = ms;
 }
+
+/// "2026-10-05T14:30" in local time for `<input type=datetime-local>`.
+pub fn datetime_local_value(ts: DateTime<Utc>) -> String {
+    #[cfg(feature = "hydrate")]
+    {
+        let d = js_sys::Date::new(&wasm_bindgen::JsValue::from_f64(ts.timestamp_millis() as f64));
+        format!(
+            "{}-{:02}-{:02}T{:02}:{:02}",
+            d.get_full_year(),
+            d.get_month() + 1,
+            d.get_date(),
+            d.get_hours(),
+            d.get_minutes()
+        )
+    }
+    #[cfg(not(feature = "hydrate"))]
+    {
+        ts.format("%Y-%m-%dT%H:%M").to_string()
+    }
+}
+
+pub fn parse_datetime_local(s: &str) -> Option<DateTime<Utc>> {
+    if s.trim().is_empty() {
+        return None;
+    }
+    #[cfg(feature = "hydrate")]
+    {
+        let ms = js_sys::Date::new(&wasm_bindgen::JsValue::from_str(s)).get_time();
+        if ms.is_nan() {
+            return None;
+        }
+        DateTime::<Utc>::from_timestamp_millis(ms as i64)
+    }
+    #[cfg(not(feature = "hydrate"))]
+    {
+        chrono::NaiveDateTime::parse_from_str(s, "%Y-%m-%dT%H:%M").ok().map(|n| n.and_utc())
+    }
+}
+

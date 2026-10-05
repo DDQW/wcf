@@ -71,13 +71,13 @@ Legende: `[x]` fertig · `[ ]` offen
 - [x] RSS-Feeds (pro Blog + global), Lesezeit, Aufrufzähler, Tag-Seiten
 
 ## Phase 6 – CMS mit benutzerdefinierten Feldern
-- [ ] Inhaltstypen mit Feld-Builder: Text, Langtext, Markdown, Zahl, Ja/Nein, Datum, Datum+Zeit,
+- [x] Inhaltstypen mit Feld-Builder: Text, Langtext, Markdown, Zahl, Ja/Nein, Datum, Datum+Zeit,
       Auswahl (einfach/mehrfach), URL, E-Mail, Farbe, Bild, Datei, Relation zu anderen Einträgen
-- [ ] Pflichtfelder, Standardwerte, Min/Max, Hilfetexte; serverseitige Validierung (JSONB)
-- [ ] Einträge: Entwurf / veröffentlicht / archiviert, geplante Veröffentlichung, Revisionen + Wiederherstellen
-- [ ] Rechte pro Typ (wer darf lesen / erstellen / alles bearbeiten)
-- [ ] Öffentliche Listen- und Detailseiten, Filter/Suche, statische Seiten (Typ „Seite")
-- [ ] Navigationsmenü-Editor, headless JSON-API (`/api/cms/...`)
+- [x] Pflichtfelder, Standardwerte, Min/Max, Hilfetexte; serverseitige Validierung (JSONB)
+- [x] Einträge: Entwurf / veröffentlicht / archiviert, geplante Veröffentlichung, Revisionen + Wiederherstellen
+- [x] Rechte pro Typ (wer darf lesen / erstellen / alles bearbeiten)
+- [x] Öffentliche Listen- und Detailseiten, Filter/Suche, statische Seiten (Typ „Seite")
+- [x] Navigationsmenü-Editor, headless JSON-API (`/api/cms/...`)
 
 ## Phase 7 – Galerie
 - [ ] Alben (persönlich + Community), Sichtbarkeit, Titelbild, Reihenfolge

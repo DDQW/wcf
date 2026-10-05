@@ -4,6 +4,7 @@ pub mod auth;
 pub mod blog;
 pub mod chat;
 pub mod chat_ext;
+pub mod cms;
 pub mod files;
 pub mod forum;
 pub mod home;
