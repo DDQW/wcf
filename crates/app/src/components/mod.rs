@@ -6,6 +6,7 @@ pub mod markdown_editor;
 pub mod modal;
 pub mod reactions;
 pub mod uploads;
+pub mod user_picker;
 
 pub use common::{
     Avatar, EmptyState, ErrorBox, PageHeader, Pager, RequireLogin, RoleBadge, Spinner, TimeAgo,

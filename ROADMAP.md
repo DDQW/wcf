@@ -55,13 +55,13 @@ Legende: `[x]` fertig · `[ ]` offen
 - [x] Wiederverwendung durch Avatare, Chat-Anhänge, Galerie, Blog-Cover, CMS-Felder, Watch
 
 ## Phase 4 – Chat
-- [ ] Öffentliche + private Kanäle, Direktnachrichten, Gruppen-DMs
-- [ ] Echtzeit per WebSocket, Verlauf mit Endlos-Scroll nach oben
-- [ ] Bearbeiten, Löschen, Antworten (Zitat), Reaktionen, Mentions, Markdown
-- [ ] Datei- und Bildanhänge (über Filebase), Bilder inline
-- [ ] Tipp-Anzeige, Online-Status, ungelesen-Zähler, „Neue Nachrichten"-Linie
-- [ ] Mitgliederliste, Kanal-Thema, angepinnte Nachrichten, Suche im Kanal
-- [ ] Kanäle erstellen/archivieren, einladen, verlassen, Benachrichtigungen stummschalten
+- [x] Öffentliche + private Kanäle, Direktnachrichten, Gruppen-DMs
+- [x] Echtzeit per WebSocket, Verlauf mit Endlos-Scroll nach oben
+- [x] Bearbeiten, Löschen, Antworten (Zitat), Reaktionen, Mentions, Markdown
+- [x] Datei- und Bildanhänge (über Filebase), Bilder inline
+- [x] Tipp-Anzeige, Online-Status, ungelesen-Zähler, „Neue Nachrichten"-Linie
+- [x] Mitgliederliste, Kanal-Thema, angepinnte Nachrichten, Suche im Kanal
+- [x] Kanäle erstellen/archivieren, einladen, verlassen, Benachrichtigungen stummschalten
 
 ## Phase 5 – Blogs
 - [ ] Blog pro User (Titel, Beschreibung), Übersicht aller Blogs + globaler Feed

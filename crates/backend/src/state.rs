@@ -89,6 +89,9 @@ impl AppState {
             max_upload_mb: s.max_upload_mb,
             calls_configured: self.config.livekit.is_some(),
             password_reset_by_mail: self.mailer.is_some(),
+            members_create_channels: s.members_create_channels,
+            members_create_watch_rooms: s.members_create_watch_rooms,
+            members_create_call_rooms: s.members_create_call_rooms,
         }
     }
 }

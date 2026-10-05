@@ -13,6 +13,7 @@ use crate::state::{use_session, use_toasts, ToastKind};
 /// Sidebar + top bar + routed content.
 #[component]
 pub fn Shell() -> impl IntoView {
+    crate::pages::chat::provide_chat_badge();
     let sidebar_open = RwSignal::new(false);
     let location = use_location();
     Effect::new(move |_| {

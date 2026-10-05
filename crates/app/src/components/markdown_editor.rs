@@ -231,7 +231,7 @@ pub fn MarkdownEditor(
 /// Replaces the UTF-16 range `[start, end)` of the textarea with `insert`
 /// and puts the caret after it.
 #[cfg(feature = "hydrate")]
-fn splice(el: &web_sys::HtmlTextAreaElement, start: u32, end: u32, insert: &str) {
+pub(crate) fn splice(el: &web_sys::HtmlTextAreaElement, start: u32, end: u32, insert: &str) {
     let v = js_sys::JsString::from(el.value());
     let len = v.length();
     let before = v.slice(0, start.min(len));
@@ -284,7 +284,7 @@ fn apply_format(el: &web_sys::HtmlTextAreaElement, fmt: Fmt) {
 
 /// The `@query` directly before the caret, as (UTF-16 offset of '@', query).
 #[cfg(feature = "hydrate")]
-fn current_mention(el: &web_sys::HtmlTextAreaElement) -> Option<(u32, String)> {
+pub(crate) fn current_mention(el: &web_sys::HtmlTextAreaElement) -> Option<(u32, String)> {
     let v = js_sys::JsString::from(el.value());
     let caret = el.selection_start().ok().flatten()?;
     let head = String::from(v.slice(0, caret));
@@ -362,7 +362,7 @@ fn ImageUploadTool(node: NodeRef<html::Textarea>, value: RwSignal<String>) -> im
 }
 
 #[cfg(feature = "hydrate")]
-fn insert_at_caret(el: &web_sys::HtmlTextAreaElement, text: &str) {
+pub(crate) fn insert_at_caret(el: &web_sys::HtmlTextAreaElement, text: &str) {
     let len = js_sys::JsString::from(el.value()).length();
     let start = el.selection_start().ok().flatten().unwrap_or(len).min(len);
     let end = el.selection_end().ok().flatten().unwrap_or(start).min(len).max(start);

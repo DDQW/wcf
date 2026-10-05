@@ -4,8 +4,11 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::chat::ChatMessageView;
 use crate::forum::PostView;
 use crate::notification::NotificationView;
+use crate::reaction::ReactionCount;
+use crate::user::UserSummary;
 
 /// Something a client can subscribe to. Authorisation is checked by the
 /// server on every subscribe (e.g. private chat channels).
@@ -27,6 +30,10 @@ pub enum ClientMsg {
     Unsubscribe { topic: Topic },
     /// Clock-sync / keepalive; answered with [`ServerMsg::Pong`].
     Ping { client_ts: f64 },
+    /// "I am typing" in a chat channel (sent at most every few seconds).
+    Typing { channel_id: Uuid },
+    /// Module-specific payloads (watch rooms, calls) as raw JSON.
+    Module { module: String, payload: serde_json::Value },
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -67,6 +74,39 @@ pub enum ServerMsg {
     },
     ForumTopicUpdated {
         topic_id: Uuid,
+    },
+    ChatMessage {
+        message: ChatMessageView,
+    },
+    ChatMessageUpdated {
+        message: ChatMessageView,
+    },
+    ChatMessageDeleted {
+        channel_id: Uuid,
+        message_id: Uuid,
+    },
+    ChatReactions {
+        channel_id: Uuid,
+        message_id: Uuid,
+        reactions: Vec<ReactionCount>,
+    },
+    ChatTyping {
+        channel_id: Uuid,
+        user: UserSummary,
+    },
+    /// Sent to every member's own connections when a channel gets a new
+    /// message, so sidebars and badges can update.
+    ChatActivity {
+        channel_id: Uuid,
+        mention: bool,
+    },
+    ChatChannelUpdated {
+        channel_id: Uuid,
+    },
+    /// Module-specific payloads (watch rooms, calls) as raw JSON.
+    Module {
+        module: String,
+        payload: serde_json::Value,
     },
     Error {
         message: String,

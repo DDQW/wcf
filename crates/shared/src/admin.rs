@@ -85,6 +85,9 @@ pub struct PublicSiteInfo {
     pub max_upload_mb: i64,
     pub calls_configured: bool,
     pub password_reset_by_mail: bool,
+    pub members_create_channels: bool,
+    pub members_create_watch_rooms: bool,
+    pub members_create_call_rooms: bool,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]

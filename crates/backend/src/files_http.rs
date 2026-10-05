@@ -39,6 +39,7 @@ pub async fn upload(
     let mut visibility = None;
     let mut context_id = None;
     let mut checked = false;
+    let mut vis_override = None;
     let mut result = UploadResult::default();
 
     while let Some(mut field) = multipart
@@ -59,7 +60,7 @@ pub async fn upload(
             continue;
         }
         let file_name = field.file_name().unwrap_or("Datei").to_string();
-        let meta = UploadMeta {
+        let mut meta = UploadMeta {
             name: file_name.clone(),
             folder_id,
             purpose,
@@ -70,8 +71,11 @@ pub async fn upload(
             context_id,
         };
         if !checked {
-            files::check_upload(&state, &user, &meta).await?;
+            vis_override = files::check_upload(&state, &user, &meta).await?;
             checked = true;
+        }
+        if let Some(v) = vis_override {
+            meta.visibility = v;
         }
         let mut writer = state.storage.begin_upload(limit).await?;
         let mut failed = None;

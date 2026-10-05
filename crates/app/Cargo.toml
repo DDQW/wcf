@@ -34,6 +34,7 @@ web-sys = { workspace = true, features = [
     "FormData", "File", "FileList", "Blob", "DragEvent", "DataTransfer", "Url",
     "Notification", "NotificationOptions", "NotificationPermission",
     "Performance", "CssStyleDeclaration", "VisibilityState", "DocumentFragment",
+    "ClipboardEvent", "Response", "Headers", "Request", "RequestInit",
 ] }
 console_error_panic_hook = { workspace = true, optional = true }
 

@@ -5,6 +5,7 @@ use leptos_router::path;
 use crate::pages::admin::{
     AdminDashboard, AdminForum, AdminLayout, AdminLog, AdminReports, AdminSettings, AdminUsers,
 };
+use crate::pages::chat::ChatPage;
 use crate::pages::files::{FilesPage, SharePage};
 use crate::pages::auth::{ForgotPasswordPage, LoginPage, RegisterPage, ResetPasswordPage};
 use crate::pages::forum::{CategoryPage, ForumIndex, NewTopicPage, TagPage, TopicPage};
@@ -31,6 +32,8 @@ pub fn AppRoutes() -> impl IntoView {
             <Route path=path!("/notifications") view=NotificationsPage/>
             <Route path=path!("/search") view=SearchPage/>
 
+            <Route path=path!("/chat") view=ChatPage/>
+            <Route path=path!("/chat/:id") view=ChatPage/>
             <Route path=path!("/files") view=FilesPage/>
             <Route path=path!("/s/:token") view=SharePage/>
 
@@ -57,7 +60,13 @@ pub fn module_nav() -> impl IntoView {
     use crate::components::layout::NavItem;
     let session = crate::state::use_session();
     let m = move || session.site.with(|s| s.modules.clone());
+    let chat_unread = use_context::<crate::pages::chat::ChatUnread>()
+        .map(|c| c.0)
+        .unwrap_or_else(|| RwSignal::new(0));
     view! {
+        <Show when=move || m().chat && session.logged_in()>
+            <NavItem href="/chat" icon="message-circle" label="Chat" badge=Signal::derive(move || chat_unread.get())/>
+        </Show>
         <Show when=move || m().files && session.logged_in()>
             <NavItem href="/files" icon="hard-drive" label="Dateien"/>
         </Show>

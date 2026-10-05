@@ -194,8 +194,9 @@ async fn ensure_own_folder(db: &PgPool, user_id: Uuid, folder_id: Option<Uuid>) 
     Ok(())
 }
 
-/// Validates an upload before streaming starts.
-pub async fn check_upload(state: &AppState, user: &AuthUser, meta: &UploadMeta) -> Result<()> {
+/// Validates an upload before streaming starts. May return a visibility
+/// the upload must use (e.g. attachments of private chat channels).
+pub async fn check_upload(state: &AppState, user: &AuthUser, meta: &UploadMeta) -> Result<Option<Visibility>> {
     state
         .limiter
         .hit(&format!("upload:{}", user.id), 120, StdDuration::from_secs(600))?;

@@ -104,6 +104,7 @@ pub async fn toggle(
             .await;
         }
     }
+    crate::extensions::after_reaction(state, st, id).await;
     counts_one(&state.db, st, id, Some(user.id)).await
 }
 
