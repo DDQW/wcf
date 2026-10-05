@@ -29,6 +29,8 @@ pub async fn lookup(
             }))
         }
         SubjectType::ChatMessage => crate::chat::subject_info(&state.db, viewer, id).await,
+        SubjectType::BlogPost => crate::blogs::subject_info(&state.db, viewer, id).await,
+        SubjectType::Comment => crate::comments::subject_info(state, viewer, id).await,
         _ => Ok(None),
     }
 }
@@ -78,6 +80,18 @@ pub async fn moderator_delete(
     match st {
         SubjectType::File => files::trash_files(_state, _actor, &[id]).await,
         SubjectType::ChatMessage => crate::chat::delete(_state, _actor, id).await,
+        SubjectType::BlogPost => crate::blogs::delete_post(_state, _actor, id).await,
+        SubjectType::Comment => crate::comments::delete(_state, _actor, id).await,
         _ => Err(Error::invalid("Dieser Inhaltstyp kann hier nicht gelöscht werden.")),
     }
+}
+
+/// Whether comments are enabled on subjects of later modules.
+pub async fn comments_allowed(_state: &AppState, _st: SubjectType, _id: Uuid) -> Result<bool> {
+    Ok(false)
+}
+
+/// Owner of a commentable subject of later modules.
+pub async fn subject_owner(_state: &AppState, _st: SubjectType, _id: Uuid) -> Result<Option<Uuid>> {
+    Ok(None)
 }

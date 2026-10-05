@@ -26,6 +26,14 @@ pub fn kind_query<'a>(
             qb.push(")");
             Some(qb)
         }
+        SearchKind::BlogPost => {
+            qb.push(
+                "FROM blog_posts p JOIN users a ON a.id = p.author_id, websearch_to_tsquery('german', ",
+            );
+            qb.push_bind(query);
+            qb.push(") q WHERE p.search @@ q AND p.status = 'published' AND p.published_at <= now()");
+            Some(qb)
+        }
         SearchKind::ChatMessage => {
             let Some(v) = viewer else { return None };
             qb.push(
@@ -46,6 +54,13 @@ pub fn hit_select(kind: SearchKind, author: &str) -> String {
     match kind {
         SearchKind::File => format!(
             "f.id, f.name AS title, f.created_at, {author}, f.mime_type || ' · ' ||              pg_size_pretty(f.size_bytes) AS hl, '/files/' || f.id AS link,              CASE WHEN f.has_thumb THEN '/files/' || f.id || '/thumb' END AS thumb,              ts_rank(f.search, q) AS rank"
+        ),
+        SearchKind::BlogPost => format!(
+            "p.id, p.title, p.published_at AS created_at, {author}, \
+             ts_headline('german', p.body_md, q, 'StartSel=\u{1}, StopSel=\u{2}, MaxWords=30, MinWords=12') AS hl, \
+             '/blog/' || a.username::text || '/' || p.slug AS link, \
+             CASE WHEN p.cover_file_id IS NOT NULL THEN '/files/' || p.cover_file_id || '/thumb' END AS thumb, \
+             ts_rank(p.search, q) AS rank"
         ),
         SearchKind::ChatMessage => format!(
             "m.id, CASE WHEN c.kind IN ('direct', 'group') THEN 'Direktnachricht' ELSE '#' || c.name END AS title, \

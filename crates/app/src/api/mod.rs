@@ -3,6 +3,7 @@
 
 pub mod admin;
 pub mod auth;
+pub mod blog;
 pub mod chat;
 pub mod files;
 pub mod forum;
@@ -25,7 +26,11 @@ mod hooks {
     }
 
     /// Lets later modules add profile statistics.
-    pub async fn extend_profile(_st: &AppState, _p: &mut ProfileView) {}
+    pub async fn extend_profile(st: &AppState, p: &mut ProfileView) {
+        if st.settings().modules.blogs {
+            p.has_blog = matches!(backend::blogs::blog_of(&st.db, None, p.user.id).await, Ok(Some(_)));
+        }
+    }
 
     /// Lets later modules add items to a user's activity stream.
     pub async fn extend_activity(
@@ -42,6 +47,17 @@ mod hooks {
         data.stats.members = counts.0;
         data.stats.topics = counts.1;
         data.stats.posts = counts.2;
+        if st.settings().modules.blogs {
+            data.extra.latest_posts = backend::blogs::list_posts(
+                &st.db,
+                _viewer,
+                shared::blog::BlogFilter::All,
+                None,
+                Some(3),
+            )
+            .await?
+            .items;
+        }
         Ok(())
     }
 

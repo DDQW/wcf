@@ -64,11 +64,11 @@ Legende: `[x]` fertig · `[ ]` offen
 - [x] Kanäle erstellen/archivieren, einladen, verlassen, Benachrichtigungen stummschalten
 
 ## Phase 5 – Blogs
-- [ ] Blog pro User (Titel, Beschreibung), Übersicht aller Blogs + globaler Feed
-- [ ] Beiträge: Titel, Slug, Markdown, Auszug, Titelbild, Tags, Entwurf / veröffentlicht / geplant
-- [ ] Kommentare (verschachtelt) mit Moderation durch Blog-Inhaber, Reaktionen
-- [ ] Blog abonnieren → Benachrichtigung bei neuen Beiträgen
-- [ ] RSS-Feeds (pro Blog + global), Lesezeit, Aufrufzähler, Tag-Seiten
+- [x] Blog pro User (Titel, Beschreibung), Übersicht aller Blogs + globaler Feed
+- [x] Beiträge: Titel, Slug, Markdown, Auszug, Titelbild, Tags, Entwurf / veröffentlicht / geplant
+- [x] Kommentare (verschachtelt) mit Moderation durch Blog-Inhaber, Reaktionen
+- [x] Blog abonnieren → Benachrichtigung bei neuen Beiträgen
+- [x] RSS-Feeds (pro Blog + global), Lesezeit, Aufrufzähler, Tag-Seiten
 
 ## Phase 6 – CMS mit benutzerdefinierten Feldern
 - [ ] Inhaltstypen mit Feld-Builder: Text, Langtext, Markdown, Zahl, Ja/Nein, Datum, Datum+Zeit,

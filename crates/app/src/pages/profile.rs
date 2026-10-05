@@ -76,6 +76,9 @@ fn ProfileContent(p: ProfileView, on_change: Callback<()>) -> impl IntoView {
                 })}
             </div>
             <div class="profile-actions">
+                {p.has_blog.then(|| view! {
+                    <a class="btn" href=format!("/blog/{}", user.username)><Icon name="book-open" size=16/>"Blog"</a>
+                })}
                 <Show when=is_self>
                     <a class="btn" href="/settings"><Icon name="edit" size=16/>"Profil bearbeiten"</a>
                 </Show>

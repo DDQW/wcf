@@ -3,6 +3,7 @@
 
 pub mod admin;
 pub mod auth;
+pub mod blog;
 pub mod chat;
 pub mod files;
 pub mod forum;

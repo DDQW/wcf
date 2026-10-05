@@ -12,5 +12,6 @@ pub async fn fill(db: &PgPool, stats: &mut AdminStats) -> Result<()> {
     stats.files = files;
     stats.storage_bytes = bytes;
     stats.chat_messages = crate::chat::total_messages(db).await?;
+    stats.blog_posts = crate::blogs::total_posts(db).await?;
     Ok(())
 }

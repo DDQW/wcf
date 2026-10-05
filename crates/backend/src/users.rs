@@ -174,7 +174,7 @@ pub async fn profile_stats(db: &PgPool, user_id: Uuid) -> Result<ProfileStats> {
     Ok(ProfileStats {
         topics: r.try_get("topics")?,
         posts: r.try_get("posts")?,
-        blog_posts: 0,
+        blog_posts: crate::blogs::user_post_count(db, user_id).await?,
         images: 0,
         reactions_received: r.try_get("reactions_received")?,
     })

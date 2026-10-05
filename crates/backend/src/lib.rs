@@ -4,7 +4,9 @@
 
 pub mod admin;
 pub mod auth;
+pub mod blogs;
 pub mod chat;
+pub mod comments;
 pub mod config;
 pub mod error;
 pub mod extensions;
@@ -69,4 +71,6 @@ where
         .route("/files/{id}/download", get(files_http::serve_download))
         .route("/files/{id}/thumb", get(files_http::serve_thumb))
         .route("/files/{id}/preview", get(files_http::serve_preview))
+        .route("/blogs/feed.xml", get(blogs::rss_all_handler))
+        .route("/blog/{username}/feed.xml", get(blogs::rss_blog_handler))
 }

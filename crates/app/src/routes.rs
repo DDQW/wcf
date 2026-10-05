@@ -5,6 +5,7 @@ use leptos_router::path;
 use crate::pages::admin::{
     AdminDashboard, AdminForum, AdminLayout, AdminLog, AdminReports, AdminSettings, AdminUsers,
 };
+use crate::pages::blog::{BlogEditorPage, BlogPage, BlogPostPage, BlogTagPage, BlogsIndex, MyBlogPage};
 use crate::pages::chat::ChatPage;
 use crate::pages::files::{FilesPage, SharePage};
 use crate::pages::auth::{ForgotPasswordPage, LoginPage, RegisterPage, ResetPasswordPage};
@@ -32,6 +33,13 @@ pub fn AppRoutes() -> impl IntoView {
             <Route path=path!("/notifications") view=NotificationsPage/>
             <Route path=path!("/search") view=SearchPage/>
 
+            <Route path=path!("/blogs") view=BlogsIndex/>
+            <Route path=path!("/blogs/tag/:tag") view=BlogTagPage/>
+            <Route path=path!("/blog/:username") view=BlogPage/>
+            <Route path=path!("/blog/:username/:slug") view=BlogPostPage/>
+            <Route path=path!("/me/blog") view=MyBlogPage/>
+            <Route path=path!("/me/blog/new") view=BlogEditorPage/>
+            <Route path=path!("/me/blog/edit/:id") view=BlogEditorPage/>
             <Route path=path!("/chat") view=ChatPage/>
             <Route path=path!("/chat/:id") view=ChatPage/>
             <Route path=path!("/files") view=FilesPage/>
@@ -67,6 +75,9 @@ pub fn module_nav() -> impl IntoView {
         <Show when=move || m().chat && session.logged_in()>
             <NavItem href="/chat" icon="message-circle" label="Chat" badge=Signal::derive(move || chat_unread.get())/>
         </Show>
+        <Show when=move || m().blogs>
+            <NavItem href="/blogs" icon="book-open" label="Blogs"/>
+        </Show>
         <Show when=move || m().files && session.logged_in()>
             <NavItem href="/files" icon="hard-drive" label="Dateien"/>
         </Show>
@@ -74,4 +85,15 @@ pub fn module_nav() -> impl IntoView {
 }
 
 /// Extra entries in the user menu (e.g. "Mein Blog").
-pub fn user_menu_items() -> impl IntoView {}
+pub fn user_menu_items() -> impl IntoView {
+    use crate::components::Icon;
+    let session = crate::state::use_session();
+    view! {
+        <Show when=move || session.site.with(|s| s.modules.blogs)>
+            <a class="menu-item" href="/me/blog"><Icon name="book-open" size=16/>"Mein Blog"</a>
+        </Show>
+        <Show when=move || session.site.with(|s| s.modules.files)>
+            <a class="menu-item" href="/files"><Icon name="hard-drive" size=16/>"Meine Dateien"</a>
+        </Show>
+    }
+}
