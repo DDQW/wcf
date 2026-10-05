@@ -1,0 +1,118 @@
+# Roadmap & Feature-Katalog
+
+Selbst gehostete Community-Plattform (Axum + Leptos/WASM + PostgreSQL, WebSockets für Realtime).
+Alle Arbeit passiert auf `master`.
+
+Legende: `[x]` fertig · `[ ]` offen
+
+## Phase 0 – Fundament + Forum-MVP
+- [x] Cargo-Workspace (`shared` / `app` / `server`), Leptos 0.8 SSR + Hydration, Axum 0.8
+- [x] PostgreSQL + sqlx-Migrationen, Cookie-Sessions (tower-sessions, Postgres-Store)
+- [x] Registrierung / Login / Logout, Argon2id, erster User wird Admin
+- [x] Forum-Grundgerüst: Kategorien, Themen, verschachtelte Antworten, Thread-Blöcke
+- [x] `/ws`-Echo-Route
+
+## Phase 1 – Plattform-Kern (Basis für alle Module)
+- [x] Neue Crate `backend` (DB, Services, Realtime-Hub, Storage) – getrennt von UI-Code
+- [x] Einheitliche Fehler (`AppError`), deutsche Fehlermeldungen
+- [x] Markdown: Sanitizing (XSS-Schutz), @Mentions, Code-Blöcke, Tabellen, Aufgabenlisten
+- [x] Rollen (Admin / Moderator / Mitglied), Sperren mit Dauer + Grund, Deaktivieren
+- [x] Profile: Bio, Ort, Website, Mitglied seit, zuletzt online, Statistiken (Avatar-Upload folgt mit der Filebase)
+- [x] Einstellungen: Anzeigename, E-Mail, Passwort ändern, Theme, Benachrichtigungs-Optionen
+- [x] Passwort-Reset (E-Mail per SMTP, falls konfiguriert – sonst Reset-Link durch Admin)
+- [ ] Einladungscodes: Registrierung optional nur mit Code (aus HQTube übernommen)
+- [x] Mitgliederliste mit Suche, Rollenfilter, Online-Status
+- [x] Benachrichtigungen (In-App, live per WebSocket): Antworten, Mentions, Reaktionen, Kommentare, Abos
+- [x] Reaktionen (Emoji) generisch für alle Inhalte
+- [x] Melden von Inhalten + Moderations-Warteschlange, Moderations-Log (Audit)
+- [x] Admin-Bereich: Dashboard (Statistiken), Benutzerverwaltung, Seiteneinstellungen
+      (Name, Beschreibung, Registrierung offen/zu, Module an/aus, Upload-Limits)
+- [x] Realtime-Hub: ein multiplexter WebSocket pro Client, Topics, Presence, Auto-Reconnect
+- [x] Globale Volltextsuche (Postgres `tsvector`, deutsch) über alle Module
+- [x] App-Shell: Seitenleiste, Suche, Benachrichtigungs-Glocke, Benutzermenü, Hell/Dunkel, mobil
+- [x] Startseite / Aktivitäts-Dashboard (neueste Themen, Blogposts, Bilder, wer ist online)
+- [x] Sicherheit: Security-Header, Rate-Limits (Login, Registrierung, Chat), SameSite-Cookies
+
+## Phase 2 – Forum komplett
+- [x] Kategorien: Unterkategorien, Farbe, Reihenfolge, Bearbeiten/Löschen, Schreibrechte pro Kategorie
+- [x] Themen: Tags, Anpinnen, Sperren, Verschieben, Löschen, Titel bearbeiten, Aufrufzähler
+- [x] Sortierung: Aktivität / Neu / Top; „Neueste Themen" über alle Kategorien; Tag-Seiten
+- [x] Beiträge: Bearbeiten (mit Versionshistorie), Löschen, Zitieren, Reaktionen, Melden, Permalink
+- [x] Thread-Blöcke seitenweise laden (echtes Endlos-Scrollen per IntersectionObserver)
+- [x] Ungelesen-Markierung pro Thema, „Neu"-Badges, Sprung zum ersten ungelesenen Beitrag
+- [x] Themen beobachten / stummschalten → Benachrichtigungen
+- [x] Live-Updates: neue Beiträge erscheinen per WebSocket
+- [x] Editor mit Toolbar, Vorschau, @Mention-Vorschläge
+
+## Phase 3 – Filebase
+- [ ] Upload (Mehrfach, Drag & Drop, Fortschrittsbalken), Größenlimit + Speicherkontingent pro User
+- [ ] Ordner (verschachtelt), Umbenennen, Verschieben, Papierkorb mit Wiederherstellen
+- [ ] Vorschau: Bilder, Video, Audio, PDF, Text; Thumbnails für Bilder (+ Video via ffmpeg, optional)
+- [ ] Sichtbarkeit: privat / Mitglieder / öffentlich; Freigabe-Links mit Ablaufdatum
+- [ ] Download mit HTTP-Range (Video-Streaming), sichere Auslieferung (CSP-Sandbox, nosniff)
+- [ ] Suche, Sortierung, Raster-/Listenansicht, Kontingentanzeige
+- [ ] Speicher-Backend hinter Trait (lokal; S3 später möglich), SHA-256-Prüfsummen
+- [ ] Wiederverwendung durch Avatare, Chat-Anhänge, Galerie, Blog-Cover, CMS-Felder, Watch
+
+## Phase 4 – Chat
+- [ ] Öffentliche + private Kanäle, Direktnachrichten, Gruppen-DMs
+- [ ] Echtzeit per WebSocket, Verlauf mit Endlos-Scroll nach oben
+- [ ] Bearbeiten, Löschen, Antworten (Zitat), Reaktionen, Mentions, Markdown
+- [ ] Datei- und Bildanhänge (über Filebase), Bilder inline
+- [ ] Tipp-Anzeige, Online-Status, ungelesen-Zähler, „Neue Nachrichten"-Linie
+- [ ] Mitgliederliste, Kanal-Thema, angepinnte Nachrichten, Suche im Kanal
+- [ ] Kanäle erstellen/archivieren, einladen, verlassen, Benachrichtigungen stummschalten
+
+## Phase 5 – Blogs
+- [ ] Blog pro User (Titel, Beschreibung), Übersicht aller Blogs + globaler Feed
+- [ ] Beiträge: Titel, Slug, Markdown, Auszug, Titelbild, Tags, Entwurf / veröffentlicht / geplant
+- [ ] Kommentare (verschachtelt) mit Moderation durch Blog-Inhaber, Reaktionen
+- [ ] Blog abonnieren → Benachrichtigung bei neuen Beiträgen
+- [ ] RSS-Feeds (pro Blog + global), Lesezeit, Aufrufzähler, Tag-Seiten
+
+## Phase 6 – CMS mit benutzerdefinierten Feldern
+- [ ] Inhaltstypen mit Feld-Builder: Text, Langtext, Markdown, Zahl, Ja/Nein, Datum, Datum+Zeit,
+      Auswahl (einfach/mehrfach), URL, E-Mail, Farbe, Bild, Datei, Relation zu anderen Einträgen
+- [ ] Pflichtfelder, Standardwerte, Min/Max, Hilfetexte; serverseitige Validierung (JSONB)
+- [ ] Einträge: Entwurf / veröffentlicht / archiviert, geplante Veröffentlichung, Revisionen + Wiederherstellen
+- [ ] Rechte pro Typ (wer darf lesen / erstellen / alles bearbeiten)
+- [ ] Öffentliche Listen- und Detailseiten, Filter/Suche, statische Seiten (Typ „Seite")
+- [ ] Navigationsmenü-Editor, headless JSON-API (`/api/cms/...`)
+
+## Phase 7 – Galerie
+- [ ] Alben (persönlich + Community), Sichtbarkeit, Titelbild, Reihenfolge
+- [ ] Bild-Upload mit automatischen Thumbnails, EXIF (Kamera, Aufnahmedatum; kein GPS), Auto-Rotation
+- [ ] Lightbox mit Tastatur-Navigation, Diashow, Original-Download
+- [ ] Kommentare, Reaktionen, Bildbeschreibungen, neueste Bilder
+
+## Phase 8 – Video-/Audio-Calls (SFU: LiveKit)
+- [ ] Token-Ausgabe durch Axum (JWT), LiveKit als eigener Dienst
+- [ ] 1:1-Anrufe mit Klingeln (annehmen/ablehnen/verpasst) über den Realtime-Hub
+- [ ] Räume (dauerhaft + spontan), Sichtbarkeit, Teilnehmerliste mit Live-Anzahl
+- [ ] Mikro/Kamera an/aus, Bildschirmfreigabe, Geräteauswahl, aktiver Sprecher, Raster-Layout
+- [ ] Moderation: Teilnehmer stummschalten / entfernen; Chat im Call
+
+## Phase 9 – Watch & Kino (cytu.be-Stil + HQTube-Integration)
+HQTube (`hqtube`, bisher Node/React/SQLite) wird nach Rust portiert und hier aufgenommen –
+ein Paket, ein Binary, eine Datenbank.
+- [ ] Räume mit Inhaber + Moderatoren, Sichtbarkeit, Playlist-Regeln (offen / Mitglieder / nur Mods)
+- [ ] Raumverzeichnis mit „Live"- und „Nächste Vorstellung"-Anzeige
+- [ ] Quellen: YouTube, direkte Video-URLs, Dateien aus der Filebase, eigene Mediathek
+- [ ] Server-autoritativer Wiedergabezustand, Drift-Korrektur, Uhrzeit-Abgleich, Nachzügler-Sync
+- [ ] Playlist: hinzufügen, entfernen, verschieben, als Nächstes; Voteskip mit Schwelle
+- [ ] Leader-Rolle (übernehmen/übergeben), Raum-Chat mit Emotes, Zuschauerliste
+- [ ] Mediathek (HQTube): Import aus `incoming/`, ffprobe, Direct-Play oder verlustfreies HLS-Remux
+      mit umschaltbaren Tonspuren, Transcode nur wenn nötig, Untertitel → WebVTT, Speicherlimit
+- [ ] Geplante Vorstellungen (HQTube): Line-up mit Pausen pro Film, Scheduler, neustartsichere Show-Engine
+- [ ] Showmaster-Konsole: Phase, Timecode, Ablauf, Transport, Overrides (jetzt starten, überspringen,
+      ±1 Min, Pause beenden, Show beenden); Vorprogramm-/Pausen-/Ende-Bildschirme mit Countdown
+- [ ] Raum-Moderation: Slow-Mode, Timeout/Bann im Raum, Flood-Schutz
+- [ ] Filmwünsche mit Abstimmung
+- [ ] Popout-Player und -Chat, Audio-Election (nur ein Fenster mit Ton), Join-Overlay (Autoplay)
+
+## Phase 10 – Betrieb
+- [ ] README: Entwicklung (Windows) + Produktion (Linux, systemd, Reverse-Proxy mit WebSocket)
+- [ ] LiveKit-Konfiguration, Backups (pg_dump + Datenverzeichnis)
+- [ ] Hintergrundjobs: geplante Beiträge, Papierkorb leeren, abgelaufene Freigaben, Sessions
+- [ ] Tests (Unit + Integrationstests für Kernlogik), clippy sauber
+- [ ] Release-Paket + Setup-Skript (wie bei HQTube), Push nach github.com/DDQW/wcf (`master`)

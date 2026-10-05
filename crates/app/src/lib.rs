@@ -1,7 +1,13 @@
+#![recursion_limit = "256"]
+
+pub mod api;
 pub mod app;
 pub mod components;
+pub mod error;
 pub mod pages;
-pub mod server_fns;
+pub mod realtime;
+pub mod routes;
+pub mod state;
 
 #[cfg(feature = "ssr")]
 pub mod ssr;

@@ -1,0 +1,6 @@
+# Keep LF everywhere: sqlx checksums migration files byte-for-byte.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
